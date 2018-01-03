@@ -1,3 +1,5 @@
+#include"./SDL-2.0.7/include/SDL.h"
+#include"./SDL-2.0.7/include/SDL_main.h"
 
 // draw a text txt on surface screen, starting from the point (x, y)
 // charset is a 128x128 bitmap containing character images
