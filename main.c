@@ -17,6 +17,7 @@ void get_board_file()
 //structs
 //file reader
 //board maker
+//time counter
 
 int main(int argc, char const *argv[])
 {
