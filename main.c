@@ -1,6 +1,5 @@
 #define _USE_MATH_DEFINES
 #include <stdio.h>
-#include <math.h>
 #include <string.h>
 
 #include "draw.h"
@@ -8,6 +7,16 @@
 #define SCREEN_WIDTH	640
 #define SCREEN_HEIGHT	480
 #define TILE 32
+
+void get_board_file()
+{
+
+}
+
+//todo:
+//structs
+//file reader
+//board maker
 
 int main(int argc, char const *argv[])
 {
@@ -142,14 +151,26 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
+	int x = 0, y = 0;
+
 	while (quit == 0)
 	{
 		SDL_FillRect(screen, NULL, black);
-		DrawSurface(screen, player, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-		DrawSurface(screen, floor, SCREEN_WIDTH / 2 + TILE, SCREEN_HEIGHT / 2 + TILE);
-		DrawSurface(screen, barrel, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + TILE);
-		DrawSurface(screen, wall, SCREEN_WIDTH / 2 + 2 * TILE, SCREEN_HEIGHT / 2 + TILE);
-		DrawSurface(screen, goal, SCREEN_WIDTH / 2 - TILE, SCREEN_HEIGHT / 2);
+		for (int i = 0; i < 21; ++i)
+		{
+			for (int j = 0; j < 16; ++j)
+			{
+				DrawSurface(screen, floor, i * TILE, j * TILE);
+				if ((i % 3 == 0 && j % 3 == 0) || (i == 1 || i == 0 || i == 20 || j == 1 || j == 0 || j == 15))
+				{
+					DrawSurface(screen, wall, i * TILE, j * TILE);
+				}
+			}
+		}
+		
+		DrawSurface(screen, barrel, 8 * TILE, 8 * TILE);
+		DrawSurface(screen, goal, 7 * TILE, 7 * TILE);
+		DrawSurface(screen, player, 2 * TILE + x * TILE, 2 * TILE + y * TILE);
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -160,7 +181,11 @@ int main(int argc, char const *argv[])
 			switch(event.type)
 			{
 				case SDL_KEYDOWN:
-					if(event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+					if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
+					else if (event.key.keysym.sym == SDLK_DOWN) ++y;
+					else if (event.key.keysym.sym == SDLK_UP) --y;
+					else if (event.key.keysym.sym == SDLK_RIGHT) ++x;
+					else if (event.key.keysym.sym == SDLK_LEFT) --x;
 					break;
 				case SDL_KEYUP:
 					break;
