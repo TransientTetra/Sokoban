@@ -16,3 +16,6 @@ void DrawLine(SDL_Surface *screen, int x, int y, int l, int dx, int dy, Uint32 c
 
 // draw a rectangle of size l by k
 void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k, Uint32 outlineColor, Uint32 fillColor);
+
+//this func draws the board
+void draw_board(int n, int s, struct field **board, unsigned int level, SDL_Surface *screen, SDL_Surface *player, SDL_Surface *floor, SDL_Surface *barrel, SDL_Surface *wall, SDL_Surface *goal, SDL_Surface *goal_barrel);

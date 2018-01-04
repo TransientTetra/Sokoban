@@ -1,4 +1,5 @@
 #include "draw.h"
+#include "struct.h"
 
 
 // draw a text txt on surface screen, starting from the point (x, y)
@@ -62,3 +63,41 @@ void DrawRectangle(SDL_Surface *screen, int x, int y, int l, int k, Uint32 outli
 	for(i = y + 1; i < y + k - 1; i++)
 		DrawLine(screen, x + 1, i, l - 2, 1, 0, fillColor);
 	};	
+
+//this func draws the board
+void draw_board(int n, int s, struct field **board, unsigned int level, SDL_Surface *screen, SDL_Surface *player, SDL_Surface *floor, SDL_Surface *barrel, SDL_Surface *wall, SDL_Surface *goal, SDL_Surface *goal_barrel)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < s; ++j)
+		{
+			if (board[i][j].wall == 1)
+			{
+				DrawSurface(screen, wall, i * TILE, j * TILE);
+			}
+			else if (board[i][j].player == 1)
+			{
+				DrawSurface(screen, player, i * TILE, j * TILE);
+			}
+			else if (board[i][j].barrel == 1)
+			{
+				if (board[i][j].goal == 1)
+				{
+					DrawSurface(screen, goal_barrel, i * TILE, j * TILE);
+				}
+				else
+				{
+					DrawSurface(screen, barrel, i * TILE, j * TILE);
+				}
+			}
+			else if (board[i][j].goal == 1)
+			{
+				DrawSurface(screen, goal, i * TILE, j * TILE);
+			}
+			else if (board[i][j].floor == 1)
+			{
+				DrawSurface(screen, floor, i * TILE, j * TILE);
+			}
+		}
+	}
+}

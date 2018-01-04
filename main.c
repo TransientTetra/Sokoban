@@ -1,5 +1,4 @@
 #define _USE_MATH_DEFINES
-#include <stdio.h>
 #include <string.h>
 
 #include "struct.h"
@@ -8,36 +7,8 @@
 #include "movement.h"
 #include "memory.h"
 
-//func reads a file with level, makes a mallocated board, returns ptr to it
-struct field ** make_board(unsigned int level)
-{
-	int n = 0, s = 0;
-	FILE *level_file;
-	char txt[20];
-	sprintf(txt, "./levels/%d.txt", level);
-	level_file = fopen(txt, "r");
-	fscanf(level_file, "%d %d ", &n, &s);
-	//dev
-	printf("%d\n%d\n", n, s);
-
-	fclose(level_file);
-
-	struct field ** board;
-	board = (struct field **) malloc(n * sizeof(struct field *));
-	int i;
-
-	for (i = 0; i < n; ++i)
-	{
-		board[i] = (struct field *) malloc(n * sizeof(struct field));
-	}
-
-	return board;
-}
-
 //todo:
-//file reader
-//board maker
-//board drawer
+//board drawer center
 //time counter
 //switcha tam na dole dać
 
@@ -49,7 +20,7 @@ int main(int argc, char const *argv[])
 	int quit, rc;
 	SDL_Event event;
 	SDL_Surface *screen, *charset;
-	SDL_Surface *player, *floor, *barrel, *wall, *goal;
+	SDL_Surface *player, *floor, *barrel, *wall, *goal, *goal_barrel;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -81,92 +52,112 @@ int main(int argc, char const *argv[])
 
 	SDL_ShowCursor(SDL_DISABLE);
 
-	charset = SDL_LoadBMP("./cs8x8.bmp");
-	if(charset == NULL)
 	{
-		printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
-	}
-	SDL_SetColorKey(charset, true, 0x000000);
+		charset = SDL_LoadBMP("./cs8x8.bmp");
+		if(charset == NULL)
+		{
+			printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
+		SDL_SetColorKey(charset, true, 0x000000);
 
-	player = SDL_LoadBMP("./art/player.bmp");
-	if(player == NULL)
-	{
-		printf("SDL_LoadBMP(player.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(charset);
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
-	}
+		player = SDL_LoadBMP("./art/player.bmp");
+		if(player == NULL)
+		{
+			printf("SDL_LoadBMP(player.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
 
-	floor = SDL_LoadBMP("./art/floor.bmp");
-	if(floor == NULL)
-	{
-		printf("SDL_LoadBMP(floor.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(player);
-		SDL_FreeSurface(charset);
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
-	}
+		floor = SDL_LoadBMP("./art/floor.bmp");
+		if(floor == NULL)
+		{
+			printf("SDL_LoadBMP(floor.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(player);
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
 
-	wall = SDL_LoadBMP("./art/wall.bmp");
-	if(wall == NULL)
-	{
-		printf("SDL_LoadBMP(wall.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(floor);
-		SDL_FreeSurface(player);
-		SDL_FreeSurface(charset);
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
-	}
+		wall = SDL_LoadBMP("./art/wall.bmp");
+		if(wall == NULL)
+		{
+			printf("SDL_LoadBMP(wall.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(floor);
+			SDL_FreeSurface(player);
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
 
-	barrel = SDL_LoadBMP("./art/barrel.bmp");
-	if(barrel == NULL)
-	{
-		printf("SDL_LoadBMP(barrel.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(wall);
-		SDL_FreeSurface(floor);
-		SDL_FreeSurface(player);
-		SDL_FreeSurface(charset);
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
-	}
+		barrel = SDL_LoadBMP("./art/barrel.bmp");
+		if(barrel == NULL)
+		{
+			printf("SDL_LoadBMP(barrel.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(wall);
+			SDL_FreeSurface(floor);
+			SDL_FreeSurface(player);
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
 
-	goal = SDL_LoadBMP("./art/goal.bmp");
-	if(goal == NULL)
-	{
-		printf("SDL_LoadBMP(goal.bmp) error: %s\n", SDL_GetError());
-		SDL_FreeSurface(barrel);
-		SDL_FreeSurface(wall);
-		SDL_FreeSurface(floor);
-		SDL_FreeSurface(player);
-		SDL_FreeSurface(charset);
-		SDL_FreeSurface(screen);
-		SDL_DestroyTexture(scrtex);
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-		return 1;
+		goal = SDL_LoadBMP("./art/goal.bmp");
+		if(goal == NULL)
+		{
+			printf("SDL_LoadBMP(goal.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(barrel);
+			SDL_FreeSurface(wall);
+			SDL_FreeSurface(floor);
+			SDL_FreeSurface(player);
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}
+
+		goal_barrel = SDL_LoadBMP("./art/goal_barrel.bmp");
+		if(goal_barrel == NULL)
+		{
+			printf("SDL_LoadBMP(goal_barrel.bmp) error: %s\n", SDL_GetError());
+			SDL_FreeSurface(goal);
+			SDL_FreeSurface(barrel);
+			SDL_FreeSurface(wall);
+			SDL_FreeSurface(floor);
+			SDL_FreeSurface(player);
+			SDL_FreeSurface(charset);
+			SDL_FreeSurface(screen);
+			SDL_DestroyTexture(scrtex);
+			SDL_DestroyWindow(window);
+			SDL_DestroyRenderer(renderer);
+			SDL_Quit();
+			return 1;
+		}	
 	}
 
 	char text[128];
@@ -178,28 +169,13 @@ int main(int argc, char const *argv[])
 	quit = 0;
 
 	int x = 0, y = 0;
+	int n = 0, s = 0;
+	get_level_size(level, n, s);
 
 	while (quit == 0)
-	{
+	{		
 		SDL_FillRect(screen, NULL, black);
-		//demo
-		{
-			for (int i = 0; i < 21; ++i)
-				{
-					for (int j = 0; j < 16; ++j)
-					{
-						DrawSurface(screen, floor, i * TILE, j * TILE);
-						if ((i % 3 == 0 && j % 3 == 0) || (i == 1 || i == 0 || i == 20 || j == 1 || j == 0 || j == 15))
-						{
-							DrawSurface(screen, wall, i * TILE, j * TILE);
-						}
-					}
-				}
-				
-				DrawSurface(screen, barrel, 8 * TILE, 8 * TILE);
-				DrawSurface(screen, goal, 7 * TILE, 7 * TILE);
-				DrawSurface(screen, player, 2 * TILE + x * TILE, 2 * TILE + y * TILE);
-		}
+		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -226,6 +202,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 
+	SDL_FreeSurface(goal);
 	SDL_FreeSurface(barrel);
 	SDL_FreeSurface(wall);
 	SDL_FreeSurface(floor);
