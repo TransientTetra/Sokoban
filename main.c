@@ -2,25 +2,50 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "struct.h"
 #include "draw.h"
+#include "logic.h"
+#include "movement.h"
+#include "memory.h"
 
-#define SCREEN_WIDTH	640
-#define SCREEN_HEIGHT	480
-#define TILE 32
-
-void get_board_file()
+//func reads a file with level, makes a mallocated board, returns ptr to it
+struct field ** make_board(unsigned int level)
 {
+	int n = 0, s = 0;
+	FILE *level_file;
+	char txt[20];
+	sprintf(txt, "./levels/%d.txt", level);
+	level_file = fopen(txt, "r");
+	fscanf(level_file, "%d %d ", &n, &s);
+	//dev
+	printf("%d\n%d\n", n, s);
 
+	fclose(level_file);
+
+	struct field ** board;
+	board = (struct field **) malloc(n * sizeof(struct field *));
+	int i;
+
+	for (i = 0; i < n; ++i)
+	{
+		board[i] = (struct field *) malloc(n * sizeof(struct field));
+	}
+
+	return board;
 }
 
 //todo:
-//structs
 //file reader
 //board maker
+//board drawer
 //time counter
+//switcha tam na dole dać
 
 int main(int argc, char const *argv[])
 {
+	struct field **board = make_board(1);
+
+	int level = 1;
 	int quit, rc;
 	SDL_Event event;
 	SDL_Surface *screen, *charset;
@@ -157,21 +182,24 @@ int main(int argc, char const *argv[])
 	while (quit == 0)
 	{
 		SDL_FillRect(screen, NULL, black);
-		for (int i = 0; i < 21; ++i)
+		//demo
 		{
-			for (int j = 0; j < 16; ++j)
-			{
-				DrawSurface(screen, floor, i * TILE, j * TILE);
-				if ((i % 3 == 0 && j % 3 == 0) || (i == 1 || i == 0 || i == 20 || j == 1 || j == 0 || j == 15))
+			for (int i = 0; i < 21; ++i)
 				{
-					DrawSurface(screen, wall, i * TILE, j * TILE);
+					for (int j = 0; j < 16; ++j)
+					{
+						DrawSurface(screen, floor, i * TILE, j * TILE);
+						if ((i % 3 == 0 && j % 3 == 0) || (i == 1 || i == 0 || i == 20 || j == 1 || j == 0 || j == 15))
+						{
+							DrawSurface(screen, wall, i * TILE, j * TILE);
+						}
+					}
 				}
-			}
+				
+				DrawSurface(screen, barrel, 8 * TILE, 8 * TILE);
+				DrawSurface(screen, goal, 7 * TILE, 7 * TILE);
+				DrawSurface(screen, player, 2 * TILE + x * TILE, 2 * TILE + y * TILE);
 		}
-		
-		DrawSurface(screen, barrel, 8 * TILE, 8 * TILE);
-		DrawSurface(screen, goal, 7 * TILE, 7 * TILE);
-		DrawSurface(screen, player, 2 * TILE + x * TILE, 2 * TILE + y * TILE);
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -182,6 +210,7 @@ int main(int argc, char const *argv[])
 			switch(event.type)
 			{
 				case SDL_KEYDOWN:
+				//switcha tu dać
 					if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
 					else if (event.key.keysym.sym == SDLK_DOWN) ++y;
 					else if (event.key.keysym.sym == SDLK_UP) --y;
