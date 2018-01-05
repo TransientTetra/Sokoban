@@ -65,6 +65,16 @@ struct field ** make_board(unsigned int level)
 	return board;
 }
 
+//frees up mallocated previously board
+void del_board(struct field ** board, int n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		free(board[i]);
+	}
+	free(board);
+}
+
 //this func opens level file, reads it's dimensions and alters given variables
 void get_level_size(unsigned int level, int &n, int &s)
 {

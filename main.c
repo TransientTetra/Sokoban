@@ -8,16 +8,15 @@
 #include "memory.h"
 
 //todo:
-//board drawer center
-//time counter
-//switcha tam na dole dać
+//fix 'n'
 
 int main(int argc, char const *argv[])
 {
 	struct field **board = make_board(1);
 
 	int level = 1;
-	int quit, rc;
+	int t1, t2, quit, rc;
+	double delta, worldTime;
 	SDL_Event event;
 	SDL_Surface *screen, *charset;
 	SDL_Surface *player, *floor, *barrel, *wall, *goal, *goal_barrel;
@@ -168,15 +167,26 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	int x = 0, y = 0;
 	int n = 0, s = 0;
 	get_level_size(level, n, s);
 
+	t1 = SDL_GetTicks();
+	worldTime = 0;
+
 	while (quit == 0)
 	{		
+		t2 = SDL_GetTicks();
+		delta = (t2 - t1) * 0.001;
+		t1 = t2;
+		worldTime += delta;
+
+
 		SDL_FillRect(screen, NULL, black);
 		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
+		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
+		sprintf(text, "Elapsed time = %.1lf s", worldTime);
+		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
 		SDL_RenderPresent(renderer);
@@ -186,12 +196,30 @@ int main(int argc, char const *argv[])
 			switch(event.type)
 			{
 				case SDL_KEYDOWN:
-				//switcha tu dać
-					if (event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-					else if (event.key.keysym.sym == SDLK_DOWN) ++y;
-					else if (event.key.keysym.sym == SDLK_UP) --y;
-					else if (event.key.keysym.sym == SDLK_RIGHT) ++x;
-					else if (event.key.keysym.sym == SDLK_LEFT) --x;
+					switch (event.key.keysym.sym)
+					{
+						case SDLK_ESCAPE:
+							quit = 1;
+							break;
+						// case SDLK_n:
+						// 	//very buggy
+						// 	del_board(board, n);
+						// 	board = make_board(level);
+						// 	worldTime = 0;
+						// 	break;
+						case SDLK_DOWN:
+							move_down(board, n, s);
+							break;
+						case SDLK_UP:
+							move_up(board, n, s);
+							break;
+						case SDLK_RIGHT:
+							move_right(board, n, s);
+							break;
+						case SDLK_LEFT:
+							move_left(board, n, s);
+							break;
+					}
 					break;
 				case SDL_KEYUP:
 					break;
@@ -202,6 +230,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 
+	del_board(board, n);
 	SDL_FreeSurface(goal);
 	SDL_FreeSurface(barrel);
 	SDL_FreeSurface(wall);
