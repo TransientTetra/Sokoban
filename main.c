@@ -8,14 +8,16 @@
 #include "memory.h"
 
 //todo:
+//win prompt into function
+//menu with many levels, level choosing
 
 int main(int argc, char const *argv[])
 {
-	struct field **board = make_board(1);
-
 	int level = 1;
+	struct field **board = make_board(level);
+	unsigned int push_counter = 0, move_counter = 0;
 	int t1, t2, quit, rc;
-	double delta, worldTime;
+	double delta, global_time;
 	SDL_Event event;
 	SDL_Surface *screen, *charset;
 	SDL_Surface *player, *floor, *barrel, *wall, *goal, *goal_barrel;
@@ -171,21 +173,21 @@ int main(int argc, char const *argv[])
 	get_level_size(level, n, s);
 
 	t1 = SDL_GetTicks();
-	worldTime = 0;
+	global_time = 0;
 
 	while (quit == 0)
 	{
 		t2 = SDL_GetTicks();
 		delta = (t2 - t1) * 0.001;
 		t1 = t2;
-		worldTime += delta;
+		global_time += delta;
 
 
 		SDL_FillRect(screen, NULL, black);
 		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
 		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
-		sprintf(text, "Elapsed time = %.1lf s", worldTime);
+		sprintf(text, "Elapsed time: %.1lf s | Moves: %d | Pushes: %d", global_time, move_counter, push_counter);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -204,22 +206,24 @@ int main(int argc, char const *argv[])
 						case SDLK_n:
 							del_board(board, n);
 							board = make_board(level);
-							worldTime = 0;
+							global_time = 0;
+							move_counter = 0;
+							push_counter = 0;
 							break;
 						case SDLK_DOWN:
-							move_down(board, n, s);
+							move_down(board, n, s, move_counter, push_counter);
 							win = check_win(board, n, s);
 							break;
 						case SDLK_UP:
-							move_up(board, n, s);
+							move_up(board, n, s, move_counter, push_counter);
 							win = check_win(board, n, s);
 							break;
 						case SDLK_RIGHT:
-							move_right(board, n, s);
+							move_right(board, n, s, move_counter, push_counter);
 							win = check_win(board, n, s);
 							break;
 						case SDLK_LEFT:
-							move_left(board, n, s);
+							move_left(board, n, s, move_counter, push_counter);
 							win = check_win(board, n, s);
 							break;
 					}
@@ -240,7 +244,7 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	while (quit == 0)
+	while (quit == 0 && win == 0)
 	{
 		SDL_FillRect(screen, NULL, blue);
 
