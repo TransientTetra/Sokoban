@@ -8,7 +8,6 @@
 #include "memory.h"
 
 //todo:
-//fix 'n'
 
 int main(int argc, char const *argv[])
 {
@@ -167,6 +166,7 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
+	int win = 1;
 	int n = 0, s = 0;
 	get_level_size(level, n, s);
 
@@ -174,7 +174,7 @@ int main(int argc, char const *argv[])
 	worldTime = 0;
 
 	while (quit == 0)
-	{		
+	{
 		t2 = SDL_GetTicks();
 		delta = (t2 - t1) * 0.001;
 		t1 = t2;
@@ -201,23 +201,26 @@ int main(int argc, char const *argv[])
 						case SDLK_ESCAPE:
 							quit = 1;
 							break;
-						// case SDLK_n:
-						// 	//very buggy
-						// 	del_board(board, n);
-						// 	board = make_board(level);
-						// 	worldTime = 0;
-						// 	break;
+						case SDLK_n:
+							del_board(board, n);
+							board = make_board(level);
+							worldTime = 0;
+							break;
 						case SDLK_DOWN:
 							move_down(board, n, s);
+							win = check_win(board, n, s);
 							break;
 						case SDLK_UP:
 							move_up(board, n, s);
+							win = check_win(board, n, s);
 							break;
 						case SDLK_RIGHT:
 							move_right(board, n, s);
+							win = check_win(board, n, s);
 							break;
 						case SDLK_LEFT:
 							move_left(board, n, s);
+							win = check_win(board, n, s);
 							break;
 					}
 					break;
@@ -228,6 +231,46 @@ int main(int argc, char const *argv[])
 					break;
 			}
 		}
+
+		if (win == 0)
+		{
+			quit = 1;
+		}
+	}
+
+	quit = 0;
+
+	while (quit == 0)
+	{
+		SDL_FillRect(screen, NULL, blue);
+
+		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
+		sprintf(text, "You won, congratulations! Press esc to exit...");
+		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
+		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
+		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+		SDL_RenderPresent(renderer);
+
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_KEYDOWN:
+					switch (event.key.keysym.sym)
+					{
+						case SDLK_ESCAPE:
+							quit = 1;
+							break;
+					}
+					break;
+				case SDL_KEYUP:
+					break;
+				case SDL_QUIT:
+					quit = 1;
+					break;
+			}
+		}
+
 	}
 
 	del_board(board, n);

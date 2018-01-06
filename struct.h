@@ -6,9 +6,9 @@
 
 struct field
 {
-	unsigned int player = 0;
-	unsigned int wall = 0;
-	unsigned int barrel = 0;
-	unsigned int goal = 0;
-	unsigned int floor = 0;
+	unsigned int player;
+	unsigned int wall;
+	unsigned int barrel;
+	unsigned int goal;
+	unsigned int floor;
 };

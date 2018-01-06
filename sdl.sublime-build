@@ -1,6 +1,6 @@
 
 		{
 			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
-			"shell_cmd": "g++ main.c -o main.o -lSDL2 draw.h draw.c movement.c movement.h memory.h memory.c logic.h logic.c struct.h",
+			"shell_cmd": "g++ main.c -o main.o -lSDL2x64 draw.h draw.c movement.c movement.h memory.h memory.c logic.h logic.c struct.h",
 			"working_dir": "$FileDir"
 		}

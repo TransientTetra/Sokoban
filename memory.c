@@ -19,6 +19,8 @@ struct field ** make_board(unsigned int level)
 		board[i] = (struct field *) malloc(s * sizeof(struct field));
 	}
 
+	zero_board(board, n, s);
+
 	for (int i = 0; i < n; ++i)
 	{
 		for (int j = 0; j < s; ++j)
@@ -28,31 +30,31 @@ struct field ** make_board(unsigned int level)
 			{
 				board[i][j].wall = 1;
 			}
-			if (temp == 'P')
+			else if (temp == 'P')
 			{
 				board[i][j].player = 1;
 				board[i][j].floor = 1;
 			}
-			if (temp == 'O')
+			else if (temp == 'O')
 			{
 				board[i][j].player = 1;
 				board[i][j].goal = 1;
 			}
-			if (temp == 'B')
+			else if (temp == 'B')
 			{
 				board[i][j].barrel = 1;
 				board[i][j].floor = 1;
 			}
-			if (temp == 'K')
-			{				
+			else if (temp == 'K')
+			{
 				board[i][j].barrel = 1;
 				board[i][j].goal = 1;
 			}
-			if (temp == 'F')
+			else if (temp == 'F')
 			{
 				board[i][j].floor = 1;
 			}
-			if (temp == 'G')
+			else if (temp == 'G')
 			{
 				board[i][j].goal = 1;
 			}			
@@ -63,6 +65,22 @@ struct field ** make_board(unsigned int level)
 	fclose(level_file);
 
 	return board;
+}
+
+//zeroes all fields in a board
+void zero_board(struct field ** board, int n, int s)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < s; ++j)
+		{
+			board[i][j].wall = 0;
+			board[i][j].player = 0;
+			board[i][j].floor = 0;
+			board[i][j].barrel = 0;
+			board[i][j].goal = 0;
+		}
+	}
 }
 
 //frees up mallocated previously board

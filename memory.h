@@ -4,6 +4,9 @@
 //func reads a file with level, makes a mallocated board, returns ptr to it
 struct field ** make_board(unsigned int level);
 
+//zeroes all fields in a board
+void zero_board(struct field ** board, int n, int s);
+
 //frees up mallocated previously board
 void del_board(struct field ** board, int n);
 
