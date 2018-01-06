@@ -13,7 +13,7 @@
 
 int main(int argc, char const *argv[])
 {
-	int level = 1;
+	int level = 6;
 	struct field **board = make_board(level);
 	unsigned int push_counter = 0, move_counter = 0;
 	int t1, t2, quit, rc;
@@ -168,7 +168,7 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	int win = 1;
+	int win = 0;
 	int n = 0, s = 0;
 	get_level_size(level, n, s);
 
@@ -187,7 +187,7 @@ int main(int argc, char const *argv[])
 		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
 		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
-		sprintf(text, "Elapsed time: %.1lf s | Moves: %d | Pushes: %d", global_time, move_counter, push_counter);
+		sprintf(text, "Level %d | Elapsed time: %.1lf s | Moves: %d | Pushes: %d", level, global_time, move_counter, push_counter);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -236,7 +236,7 @@ int main(int argc, char const *argv[])
 			}
 		}
 
-		if (win == 0)
+		if (win == 1)
 		{
 			quit = 1;
 		}
@@ -244,12 +244,12 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	while (quit == 0 && win == 0)
+	while (quit == 0 && win == 1)
 	{
 		SDL_FillRect(screen, NULL, blue);
 
 		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
-		sprintf(text, "You won, congratulations! Press esc to exit...");
+		sprintf(text, "Congratulations! You completed level %d in %d moves and %d pushes. Press esc to exit...", level, move_counter, push_counter);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);

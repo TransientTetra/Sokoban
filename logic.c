@@ -19,7 +19,7 @@ void get_player_position(struct field **board, int &x, int &y, int n, int s)
 	}
 }
 
-//checks if all barrels are on on goal tiles, returns 0 if yes, 1 otherwise
+//checks if all barrels are on on goal tiles, returns 1 if yes, 0 otherwise
 int check_win(struct field **board, int n, int s)
 {
 	for (int i = 0; i < n; ++i)
@@ -28,9 +28,9 @@ int check_win(struct field **board, int n, int s)
 		{
 			if (board[i][j].barrel == 1 && board[i][j].goal != 1)
 			{
-				return 1;
+				return 0;
 			}
 		}
 	}
-	return 0;
+	return 1;
 }
