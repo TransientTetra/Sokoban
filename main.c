@@ -1,5 +1,4 @@
 #define _USE_MATH_DEFINES
-#include <string.h>
 
 #include "struct.h"
 #include "draw.h"
@@ -8,13 +7,113 @@
 #include "memory.h"
 
 //todo:
-//win prompt into function
-//menu with many levels, level choosing
+//level selector
+//leaderboard
+
+int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green)
+{
+	return 1337;
+}
+
+void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green, int &level, int &quit)
+{
+	SDL_Event event;
+	int choice = 0;
+	int highlight = 1;
+	while(choice == 0)
+	{
+		SDL_FillRect(screen, NULL, black);
+
+		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
+		DrawString(screen, screen->w / 2 - strlen("MENU") * 8 / 2, 11, "MENU", charset);
+
+		if (highlight == 1)
+		{
+			DrawRectangle(screen, 4, 4 + TILE + 2, SCREEN_WIDTH - 8, TILE, green, green);
+		}
+		else
+		{			
+			DrawRectangle(screen, 4, 4 + TILE + 2, SCREEN_WIDTH - 8, TILE, blue, blue);
+		}
+		DrawString(screen, screen->w / 2 - strlen("CHOOSE LEVEL") * 8 / 2, 13 + TILE, "CHOOSE LEVEL", charset);
+		
+		if (highlight == 2)
+		{
+			DrawRectangle(screen, 4, 4 + 2 * TILE + 2 * 2, SCREEN_WIDTH - 8, TILE, green, green);
+		}
+		else
+		{			
+			DrawRectangle(screen, 4, 4 + 2 * TILE + 2 * 2, SCREEN_WIDTH - 8, TILE, blue, blue);
+		}
+		DrawString(screen, screen->w / 2 - strlen("HIGHSCORES") * 8 / 2, 13 + 2 * TILE, "HIGHSCORES", charset);
+		
+		if (highlight == 3)
+		{
+			DrawRectangle(screen, 4, 4 + 3 * TILE + 3 * 2, SCREEN_WIDTH - 8, TILE, green, green);
+		}
+		else
+		{			
+			DrawRectangle(screen, 4, 4 + 3 * TILE + 3 * 2, SCREEN_WIDTH - 8, TILE, blue, blue);
+		}
+		DrawString(screen, screen->w / 2 - strlen("QUIT") * 8 / 2, 13 + 3 * TILE, "QUIT", charset);
+
+		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
+		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+		SDL_RenderPresent(renderer);
+
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_KEYDOWN:
+					switch (event.key.keysym.sym)
+					{
+						case SDLK_ESCAPE:
+							choice = 1;
+							quit = 1;
+							break;
+						case SDLK_DOWN:
+							if (highlight < 3)
+							{
+								++highlight;
+							}
+							break;
+						case SDLK_UP:
+							if (highlight > 1)
+							{
+								--highlight;
+							}
+							break;
+						case SDLK_RETURN:
+							switch (highlight)
+							{
+								case 1:
+									level = level_selector(screen, scrtex, renderer, charset, blue, black, green);
+									choice = 1;
+									break;
+								case 2:
+								case 3:
+									quit = 1;
+									choice = 1;
+									break;
+							}
+							break;
+					}
+					break;
+				case SDL_KEYUP:
+					break;
+				case SDL_QUIT:
+					quit = 1;
+					break;
+			}
+		}
+	}
+}
 
 int main(int argc, char const *argv[])
 {
-	int level = 6;
-	struct field **board = make_board(level);
+	struct field **board;
+	int level = 1337;
 	unsigned int push_counter = 0, move_counter = 0;
 	int t1, t2, quit, rc;
 	double delta, global_time;
@@ -46,7 +145,7 @@ int main(int argc, char const *argv[])
 
 	SDL_SetWindowTitle(window, "Sokoban");
 
-	screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, TILE, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
 	scrtex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -168,6 +267,10 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
+	menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+
+	board = make_board(level);
+
 	int win = 0;
 	int n = 0, s = 0;
 	get_level_size(level, n, s);
@@ -186,7 +289,7 @@ int main(int argc, char const *argv[])
 		SDL_FillRect(screen, NULL, black);
 		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
+		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
 		sprintf(text, "Level %d | Elapsed time: %.1lf s | Moves: %d | Pushes: %d", level, global_time, move_counter, push_counter);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -201,6 +304,7 @@ int main(int argc, char const *argv[])
 					switch (event.key.keysym.sym)
 					{
 						case SDLK_ESCAPE:
+							del_board(board, n);
 							quit = 1;
 							break;
 						case SDLK_n:
@@ -209,6 +313,15 @@ int main(int argc, char const *argv[])
 							global_time = 0;
 							move_counter = 0;
 							push_counter = 0;
+							break;
+						case SDLK_m:
+							del_board(board, n);
+							global_time = 0;
+							move_counter = 0;
+							push_counter = 0;
+							menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+							get_level_size(level, n, s);
+							board = make_board(level);
 							break;
 						case SDLK_DOWN:
 							move_down(board, n, s, move_counter, push_counter);
@@ -238,46 +351,26 @@ int main(int argc, char const *argv[])
 
 		if (win == 1)
 		{
-			quit = 1;
-		}
-	}
-
-	quit = 0;
-
-	while (quit == 0 && win == 1)
-	{
-		SDL_FillRect(screen, NULL, blue);
-
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, 32, blue, blue);
-		sprintf(text, "Congratulations! You completed level %d in %d moves and %d pushes. Press esc to exit...", level, move_counter, push_counter);
-		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
-		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
-		SDL_RenderPresent(renderer);
-
-		while(SDL_PollEvent(&event))
-		{
-			switch(event.type)
+			int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter);
+			if (win_menu_check == 1)
 			{
-				case SDL_KEYDOWN:
-					switch (event.key.keysym.sym)
-					{
-						case SDLK_ESCAPE:
-							quit = 1;
-							break;
-					}
-					break;
-				case SDL_KEYUP:
-					break;
-				case SDL_QUIT:
-					quit = 1;
-					break;
+				quit = 1;
+				del_board(board, n);
+			}
+			if (win_menu_check == 0)
+			{
+				win = 0;
+				del_board(board, n);
+				global_time = 0;
+				move_counter = 0;
+				push_counter = 0;
+				menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+				get_level_size(level, n, s);
+				board = make_board(level);
 			}
 		}
-
 	}
 
-	del_board(board, n);
 	SDL_FreeSurface(goal);
 	SDL_FreeSurface(barrel);
 	SDL_FreeSurface(wall);

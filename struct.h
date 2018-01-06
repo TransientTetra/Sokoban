@@ -1,3 +1,8 @@
+#include "./SDL-2.0.7/include/SDL.h"
+#include "./SDL-2.0.7/include/SDL_main.h"
+#include <stdio.h>
+#include <string.h>
+
 #define SCREEN_WIDTH	1200
 #define SCREEN_HEIGHT	600
 #define BOARD_X 64
