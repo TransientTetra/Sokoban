@@ -8,13 +8,12 @@
 
 //todo:
 //leaderboard
-
-
+//graphic loading into func?
 
 int main(int argc, char const *argv[])
 {
 	struct field **board;
-	int level = 1337;
+	int level = 0;
 	unsigned int push_counter = 0, move_counter = 0;
 	int t1, t2, quit, rc;
 	double delta, global_time;
@@ -170,107 +169,109 @@ int main(int argc, char const *argv[])
 
 	menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
 
-	board = make_board(level);
-
-	int win = 0;
-	int n = 0, s = 0;
-	get_level_size(level, n, s);
-
-	t1 = SDL_GetTicks();
-	global_time = 0;
-
-	while (quit == 0)
+	if (quit == 0)
 	{
-		t2 = SDL_GetTicks();
-		delta = (t2 - t1) * 0.001;
-		t1 = t2;
-		global_time += delta;
+		board = make_board(level);
 
+		int win = 0;
+		int n = 0, s = 0;
+		get_level_size(level, n, s);
 
-		SDL_FillRect(screen, NULL, black);
-		draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
+		t1 = SDL_GetTicks();
+		global_time = 0;
 
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
-		sprintf(text, "Level %d | Elapsed time: %.1lf s | Moves: %d | Pushes: %d", level, global_time, move_counter, push_counter);
-		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
-		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
-		SDL_RenderPresent(renderer);
-
-		while(SDL_PollEvent(&event))
+		while (quit == 0)
 		{
-			switch(event.type)
+			t2 = SDL_GetTicks();
+			delta = (t2 - t1) * 0.001;
+			t1 = t2;
+			global_time += delta;
+
+
+			SDL_FillRect(screen, NULL, black);
+			draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
+
+			DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
+			sprintf(text, "Level %d | Elapsed time: %.1lf s | Moves: %d | Pushes: %d", level, global_time, move_counter, push_counter);
+			DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
+			SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
+			SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+			SDL_RenderPresent(renderer);
+
+			while(SDL_PollEvent(&event))
 			{
-				case SDL_KEYDOWN:
-					switch (event.key.keysym.sym)
-					{
-						case SDLK_ESCAPE:
-							del_board(board, n);
-							quit = 1;
-							break;
-						case SDLK_n:
-							del_board(board, n);
-							board = make_board(level);
-							global_time = 0;
-							move_counter = 0;
-							push_counter = 0;
-							break;
-						case SDLK_m:
-							del_board(board, n);
-							global_time = 0;
-							move_counter = 0;
-							push_counter = 0;
-							menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
-							get_level_size(level, n, s);
-							board = make_board(level);
-							break;
-						case SDLK_DOWN:
-							move_down(board, n, s, move_counter, push_counter);
-							win = check_win(board, n, s);
-							break;
-						case SDLK_UP:
-							move_up(board, n, s, move_counter, push_counter);
-							win = check_win(board, n, s);
-							break;
-						case SDLK_RIGHT:
-							move_right(board, n, s, move_counter, push_counter);
-							win = check_win(board, n, s);
-							break;
-						case SDLK_LEFT:
-							move_left(board, n, s, move_counter, push_counter);
-							win = check_win(board, n, s);
-							break;
-					}
-					break;
-				case SDL_KEYUP:
-					break;
-				case SDL_QUIT:
+				switch(event.type)
+				{
+					case SDL_KEYDOWN:
+						switch (event.key.keysym.sym)
+						{
+							case SDLK_ESCAPE:
+								del_board(board, n);
+								quit = 1;
+								break;
+							case SDLK_n:
+								del_board(board, n);
+								board = make_board(level);
+								global_time = 0;
+								move_counter = 0;
+								push_counter = 0;
+								break;
+							case SDLK_m:
+								del_board(board, n);
+								global_time = 0;
+								move_counter = 0;
+								push_counter = 0;
+								menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+								get_level_size(level, n, s);
+								board = make_board(level);
+								break;
+							case SDLK_DOWN:
+								move_down(board, n, s, move_counter, push_counter);
+								win = check_win(board, n, s);
+								break;
+							case SDLK_UP:
+								move_up(board, n, s, move_counter, push_counter);
+								win = check_win(board, n, s);
+								break;
+							case SDLK_RIGHT:
+								move_right(board, n, s, move_counter, push_counter);
+								win = check_win(board, n, s);
+								break;
+							case SDLK_LEFT:
+								move_left(board, n, s, move_counter, push_counter);
+								win = check_win(board, n, s);
+								break;
+						}
+						break;
+					case SDL_QUIT:
+						quit = 1;
+						break;
+				}
+			}
+
+			if (win == 1)
+			{
+				int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter);
+				if (win_menu_check == 1)
+				{
 					quit = 1;
-					break;
-			}
-		}
-
-		if (win == 1)
-		{
-			int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter);
-			if (win_menu_check == 1)
-			{
-				quit = 1;
-				del_board(board, n);
-			}
-			if (win_menu_check == 0)
-			{
-				win = 0;
-				del_board(board, n);
-				global_time = 0;
-				move_counter = 0;
-				push_counter = 0;
-				menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
-				get_level_size(level, n, s);
-				board = make_board(level);
+					del_board(board, n);
+				}
+				if (win_menu_check == 0)
+				{
+					win = 0;
+					del_board(board, n);
+					global_time = 0;
+					move_counter = 0;
+					push_counter = 0;
+					menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+					get_level_size(level, n, s);
+					board = make_board(level);
+				}
 			}
 		}
 	}
+	
 
 	SDL_FreeSurface(goal);
 	SDL_FreeSurface(barrel);
@@ -284,6 +285,5 @@ int main(int argc, char const *argv[])
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 
-	SDL_Quit();
 	return 0;
 }
