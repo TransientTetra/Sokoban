@@ -46,7 +46,9 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 
 		sprintf(text, "Congratulations! You completed level %d in %d moves and %d pushes.", level, move_counter, push_counter);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2 * TILE, text, charset);
-		DrawString(screen, screen->w / 2 - strlen("Press esc to exit or m to go back to menu...") * 8 / 2, 3 * TILE, "Press esc to exit or m to go back to menu...", charset);
+		DrawString(screen, screen->w / 2 - strlen("If you want to save your score in a leaderboard press l") * 8 / 2, 3 * TILE, "If you want to save your score in a leaderboard press l", charset);
+		DrawString(screen, screen->w / 2 - strlen("If you want to return to the main menu press m") * 8 / 2, 4 * TILE, "If you want to return to the main menu press m", charset);
+		DrawString(screen, screen->w / 2 - strlen("If you want to exit press esc") * 8 / 2, 5 * TILE, "If you want to exit press esc", charset);
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
 		SDL_RenderPresent(renderer);
@@ -63,6 +65,10 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 							return 1;
 							break;
 						case SDLK_m:
+							return 0;
+							break;
+						case SDLK_l:
+							add_to_leaderboard(level);
 							return 0;
 							break;
 					}
@@ -175,6 +181,7 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green, int &level, int &quit)
 {
 	SDL_Event event;
+	int level_leaderboard = 0;
 	int choice = 0;
 	int highlight = 1;
 	while(choice == 0)
@@ -230,6 +237,9 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 									}
 									break;
 								case 2:
+									level_leaderboard = level_selector(screen, scrtex, renderer, charset, blue, black, green);
+									display_leaderboard(level_leaderboard);
+									break;
 								case 3:
 									quit = 1;
 									choice = 1;
@@ -246,4 +256,26 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 			}
 		}
 	}
+}
+
+//displays leaderboard from file for a given level
+void display_leaderboard(int level)
+{
+	char name[32];
+	sprintf(name, "./leaderboards/%d.txt", level);
+	FILE *leaderboard = fopen(name, "r");
+	if (leaderboard == NULL)
+	{
+		printf("no leaderboard yet\n");
+	}
+	else
+	{			
+		fclose(leaderboard);
+	}
+}
+
+//adds to leaderboard
+void add_to_leaderboard(int level)
+{
+	printf("dodano\n");
 }

@@ -18,3 +18,9 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 
 //draws a selector box, for menu
 void select_box(const char *text, int highlight, int n, SDL_Surface *screen, SDL_Surface *charset, int blue, int green);
+
+//displays leaderboard from file for a given level
+void display_leaderboard(int level);
+
+//adds to leaderboard
+void add_to_leaderboard(int level);
