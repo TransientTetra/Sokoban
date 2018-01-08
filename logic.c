@@ -36,7 +36,7 @@ int check_win(struct field **board, int n, int s)
 }
 
 //displays a prompt upon winning
-int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int &quit, int level, int move_counter, int push_counter)
+int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int &quit, int level, int move_counter, int push_counter, double time)
 {
 	SDL_Event event;
 	char text[128];
@@ -44,7 +44,7 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 	{
 		SDL_FillRect(screen, NULL, blue);
 
-		sprintf(text, "Congratulations! You completed level %d in %d moves and %d pushes.", level, move_counter, push_counter);
+		sprintf(text, "Congratulations! You completed level %d in %d moves including %d pushes, in %.1lf seconds!", level, move_counter, push_counter, time);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2 * TILE, text, charset);
 		DrawString(screen, screen->w / 2 - strlen("If you want to save your score in a leaderboard press l") * 8 / 2, 3 * TILE, "If you want to save your score in a leaderboard press l", charset);
 		DrawString(screen, screen->w / 2 - strlen("If you want to return to the main menu press m") * 8 / 2, 4 * TILE, "If you want to return to the main menu press m", charset);
@@ -68,7 +68,7 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 							return 0;
 							break;
 						case SDLK_l:
-							add_to_leaderboard(level);
+							add_to_leaderboard(level, time, move_counter);
 							return 0;
 							break;
 					}
@@ -238,7 +238,10 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 									break;
 								case 2:
 									level_leaderboard = level_selector(screen, scrtex, renderer, charset, blue, black, green);
-									display_leaderboard(level_leaderboard);
+									if (level_leaderboard != 0)
+									{
+										display_leaderboard(screen, scrtex, renderer, charset, level_leaderboard, blue);
+									}
 									break;
 								case 3:
 									quit = 1;
@@ -259,23 +262,94 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 }
 
 //displays leaderboard from file for a given level
-void display_leaderboard(int level)
+void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int blue)
 {
 	char name[32];
 	sprintf(name, "./leaderboards/%d.txt", level);
 	FILE *leaderboard = fopen(name, "r");
-	if (leaderboard == NULL)
+
+	SDL_Event event;
+	char text[128];
+	int quit = 0;
+	int sort = 0;
+	while (quit == 0)
 	{
-		printf("no leaderboard yet\n");
+		SDL_FillRect(screen, NULL, blue);
+
+		if (leaderboard == NULL)
+		{
+			DrawString(screen, screen->w / 2 - strlen("There are no saved highscores for this level yet") * 8 / 2, 2 * TILE, "There are no saved highscores for this level yet", charset);
+			DrawString(screen, screen->w / 2 - strlen("Press any key to go back to main menu...") * 8 / 2, 3 * TILE, "Press any key to go back to main menu...", charset);
+		}
+		else
+		{
+			sprintf(text, "LEVEL %d LEADERBOARD", level);
+			DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, TILE / 2, text, charset);
+			DrawString(screen, screen->w / 2 - strlen("Press esc to return to main menu | Press s to change sorting mode") * 8 / 2, TILE, "Press esc to return to main menu | Press s to change sorting mode", charset);
+			if (sort == 0)
+			{
+				DrawString(screen, screen->w / 2 - strlen("Currently sorting by shortest time") * 8 / 2, TILE + TILE / 2, "Currently sorting by shortest time", charset);
+			}
+			else if (sort == 1)
+			{
+				DrawString(screen, screen->w / 2 - strlen("Currently sorting by least moves") * 8 / 2, TILE + TILE / 2, "Currently sorting by least moves", charset);
+			}
+			//here draw ranking
+		}
+		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
+		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+		SDL_RenderPresent(renderer);
+
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_KEYDOWN:
+					if (leaderboard == NULL)
+					{
+						quit = 1;
+					}
+					else
+					{
+						switch (event.key.keysym.sym)
+						{
+							case SDLK_ESCAPE:
+								quit = 1;
+								break;
+							case SDLK_s:
+								if (sort == 0)
+								{
+									sort = 1;
+								}
+								else if (sort == 1)
+								{
+									sort = 0;
+								}
+								break;
+						}
+					}					
+					break;
+				case SDL_KEYUP:
+					break;
+				case SDL_QUIT:
+					quit = 1;
+					break;
+			}
+		}
+
 	}
-	else
-	{			
+	if (leaderboard != NULL)
+	{
 		fclose(leaderboard);
 	}
 }
 
-//adds to leaderboard
-void add_to_leaderboard(int level)
+//adds to leaderboard file of given level
+void add_to_leaderboard(int level, double time, int moves)
 {
-	printf("dodano\n");
+	char filename[32];
+	sprintf(filename, "./leaderboards/%d.txt", level);
+	FILE *leaderboard = fopen(filename, "a");
+	fprintf(leaderboard, "%d,%.1lf,%d;", level, time, moves);
+	fclose(leaderboard);
 }

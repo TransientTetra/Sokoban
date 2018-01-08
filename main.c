@@ -251,7 +251,7 @@ int main(int argc, char const *argv[])
 
 			if (win == 1)
 			{
-				int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter);
+				int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter, global_time);
 				if (win_menu_check == 1)
 				{
 					quit = 1;
