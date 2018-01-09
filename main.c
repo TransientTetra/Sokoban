@@ -9,6 +9,7 @@
 //todo:
 //leaderboard
 //graphic loading into func?
+//animation in movement funcs
 
 int main(int argc, char const *argv[])
 {
@@ -173,7 +174,8 @@ int main(int argc, char const *argv[])
 	{
 		board = make_board(level);
 
-		int win = 0;
+		short int loaded_board = 0;
+		short int win = 0;
 		int n = 0, s = 0;
 		get_level_size(level, n, s);
 
@@ -217,13 +219,14 @@ int main(int argc, char const *argv[])
 								push_counter = 0;
 								break;
 							case SDLK_m:
-								del_board(board, n);
 								global_time = 0;
+								del_board(board, n);
 								move_counter = 0;
 								push_counter = 0;
 								menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
 								get_level_size(level, n, s);
 								board = make_board(level);
+								loaded_board = 1;
 								break;
 							case SDLK_DOWN:
 								move_down(board, n, s, move_counter, push_counter);
@@ -240,6 +243,18 @@ int main(int argc, char const *argv[])
 							case SDLK_LEFT:
 								move_left(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
+								break;
+						}
+						break;
+					case SDL_KEYUP:
+						switch (event.key.keysym.sym)
+						{
+							case SDLK_RETURN:
+								if (loaded_board == 1)
+								{
+									global_time = 0;
+									loaded_board = 0;
+								}
 								break;
 						}
 						break;

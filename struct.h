@@ -17,3 +17,10 @@ struct field
 	unsigned int goal;
 	unsigned int floor;
 };
+
+struct score
+{
+	int number;
+	int time;
+	int moves;
+};

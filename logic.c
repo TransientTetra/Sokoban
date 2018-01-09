@@ -264,12 +264,14 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 //displays leaderboard from file for a given level
 void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int blue)
 {
+	struct score *scores;
 	char name[32];
 	sprintf(name, "./leaderboards/%d.txt", level);
 	FILE *leaderboard = fopen(name, "r");
 
 	SDL_Event event;
 	char text[128];
+	int amount_scores = 0;
 	int quit = 0;
 	int sort = 0;
 	while (quit == 0)
@@ -294,7 +296,82 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			{
 				DrawString(screen, screen->w / 2 - strlen("Currently sorting by least moves") * 8 / 2, TILE + TILE / 2, "Currently sorting by least moves", charset);
 			}
-			//here draw ranking
+			DrawString(screen, screen->w / 2 - strlen("No.       Time [s]       Number of moves") * 8 / 2, 2 * TILE, "No.       Time [s]       Number of moves", charset);
+			
+			if (amount_scores == 0)
+			{
+				char character = 0;
+				rewind(leaderboard);
+				while(character != EOF)
+				{
+					character = fgetc(leaderboard);
+					if (character == '@')
+					{
+						++amount_scores;
+					}
+				}
+				scores = (struct score *) malloc(amount_scores * sizeof(struct score));
+			}
+
+			rewind(leaderboard);
+			for (int i = 0; i < amount_scores; ++i)
+			{
+				int temp_time, temp_moves;
+				fscanf(leaderboard, "@%d,%d;", &temp_time, &temp_moves);
+				scores[i].time = temp_time;
+				scores[i].moves = temp_moves;
+				scores[i].number = i + 1;
+			}
+			if(sort == 0)
+			{
+				int check_sorted = 0;
+				while (check_sorted == 0)
+				{
+					check_sorted = 1;
+					for (int i = 0; i < amount_scores; ++i)
+					{
+						if (scores[i].time > scores[i + 1].time)
+						{
+							check_sorted = 0;
+							int temp_time = scores[i].time;
+							scores[i].time = scores[i + 1].time;
+							scores[i + 1].time = temp_time;
+							int temp_moves = scores[i].moves;
+							scores[i].moves = scores[i + 1].moves;
+							scores[i + 1].moves = temp_moves;
+						}
+					}
+				}
+			}
+			if(sort == 1)
+			{
+				int check_sorted = 0;
+				while (check_sorted == 0)
+				{
+					check_sorted = 1;
+					for (int i = 0; i < amount_scores; ++i)
+					{
+						if (scores[i].moves > scores[i + 1].moves)
+						{
+							check_sorted = 0;
+							int temp_time = scores[i].time;
+							scores[i].time = scores[i + 1].time;
+							scores[i + 1].time = temp_time;
+							int temp_moves = scores[i].moves;
+							scores[i].moves = scores[i + 1].moves;
+							scores[i + 1].moves = temp_moves;
+						}
+					}
+				}
+			}
+			for (int i = 0; i < amount_scores; ++i)
+			{
+				//display, work in progress
+				sprintf(text, "%d.", scores[i].number);
+				DrawString(screen, 445, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				sprintf(text, "%d s")
+				, scores[i].time, scores[i].moves
+			}
 		}
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -350,6 +427,6 @@ void add_to_leaderboard(int level, double time, int moves)
 	char filename[32];
 	sprintf(filename, "./leaderboards/%d.txt", level);
 	FILE *leaderboard = fopen(filename, "a");
-	fprintf(leaderboard, "%d,%.1lf,%d;", level, time, moves);
+	fprintf(leaderboard, "@%d,%d;", (int)time, moves);
 	fclose(leaderboard);
 }
