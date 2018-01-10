@@ -419,6 +419,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 	if (leaderboard != NULL)
 	{
 		fclose(leaderboard);
+		free(scores);
 	}
 }
 

@@ -1,5 +1,3 @@
-#define _USE_MATH_DEFINES
-
 #include "struct.h"
 #include "draw.h"
 #include "logic.h"
@@ -11,10 +9,10 @@
 //animation in movement funcs
 
 //bugs:
-//time bug (temp fix)
-//corrupted size vs prev_size
-//munmap_chunk: invalid pointer (fixed; in display_leaderboard while sorting it tried to access i + 1 element
-//from an array containing i elements)
+//time bug!!!
+//(fixed)seg fault (choose level->enter game->m to menu->choose level->esc to menu->quit)
+//(fixed)corrupted size vs prev_size (seen once, unseen since; fixed along with munmap?)
+//(fixed)munmap_chunk: invalid pointer (in display_leaderboard while sorting)
 
 int main(int argc, char const *argv[])
 {
@@ -179,7 +177,6 @@ int main(int argc, char const *argv[])
 	{
 		board = make_board(level);
 
-		short int loaded_board = 0;
 		short int win = 0;
 		int n = 0, s = 0;
 		get_level_size(level, n, s);
@@ -229,9 +226,11 @@ int main(int argc, char const *argv[])
 								move_counter = 0;
 								push_counter = 0;
 								menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
-								get_level_size(level, n, s);
-								board = make_board(level);
-								loaded_board = 1;
+								if (level != 0)
+								{
+									get_level_size(level, n, s);
+									board = make_board(level);
+								}
 								break;
 							case SDLK_DOWN:
 								move_down(board, n, s, move_counter, push_counter);
@@ -248,18 +247,6 @@ int main(int argc, char const *argv[])
 							case SDLK_LEFT:
 								move_left(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
-								break;
-						}
-						break;
-					case SDL_KEYUP:
-						switch (event.key.keysym.sym)
-						{
-							case SDLK_RETURN:
-								if (loaded_board == 1)
-								{
-									global_time = 0;
-									loaded_board = 0;
-								}
 								break;
 						}
 						break;
