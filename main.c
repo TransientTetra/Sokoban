@@ -7,9 +7,14 @@
 #include "memory.h"
 
 //todo:
-//leaderboard
 //graphic loading into func?
 //animation in movement funcs
+
+//bugs:
+//time bug (temp fix)
+//corrupted size vs prev_size
+//munmap_chunk: invalid pointer (fixed; in display_leaderboard while sorting it tried to access i + 1 element
+//from an array containing i elements)
 
 int main(int argc, char const *argv[])
 {

@@ -328,7 +328,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 				while (check_sorted == 0)
 				{
 					check_sorted = 1;
-					for (int i = 0; i < amount_scores; ++i)
+					for (int i = 0; i < amount_scores - 1; ++i)
 					{
 						if (scores[i].time > scores[i + 1].time)
 						{
@@ -349,7 +349,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 				while (check_sorted == 0)
 				{
 					check_sorted = 1;
-					for (int i = 0; i < amount_scores; ++i)
+					for (int i = 0; i < amount_scores - 1; ++i)
 					{
 						if (scores[i].moves > scores[i + 1].moves)
 						{
@@ -366,11 +366,12 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			}
 			for (int i = 0; i < amount_scores; ++i)
 			{
-				//display, work in progress
 				sprintf(text, "%d.", scores[i].number);
 				DrawString(screen, 445, 2 * TILE + (i + 1) * TILE / 2, text, charset);
-				sprintf(text, "%d s")
-				, scores[i].time, scores[i].moves
+				sprintf(text, "%d s", scores[i].time);
+				DrawString(screen, 555 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				sprintf(text, "%d", scores[i].moves);
+				DrawString(screen, 700 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
 			}
 		}
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
