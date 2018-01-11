@@ -9,7 +9,7 @@
 //animation in movement funcs
 
 //bugs:
-//time bug!!!
+//(fixed)time bug!!!
 //(fixed)seg fault (choose level->enter game->m to menu->choose level->esc to menu->quit)
 //(fixed)corrupted size vs prev_size (seen once, unseen since; fixed along with munmap?)
 //(fixed)munmap_chunk: invalid pointer (in display_leaderboard while sorting)
@@ -177,6 +177,8 @@ int main(int argc, char const *argv[])
 	{
 		board = make_board(level);
 
+
+		double distance = 0;
 		short int win = 0;
 		int n = 0, s = 0;
 		get_level_size(level, n, s);
@@ -190,6 +192,7 @@ int main(int argc, char const *argv[])
 			delta = (t2 - t1) * 0.001;
 			t1 = t2;
 			global_time += delta;
+			distance += PLAYERSPEED * delta;
 
 
 			SDL_FillRect(screen, NULL, black);
@@ -226,6 +229,7 @@ int main(int argc, char const *argv[])
 								move_counter = 0;
 								push_counter = 0;
 								menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+								t1 = SDL_GetTicks();
 								if (level != 0)
 								{
 									get_level_size(level, n, s);
@@ -272,6 +276,7 @@ int main(int argc, char const *argv[])
 					move_counter = 0;
 					push_counter = 0;
 					menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+					t1 = SDL_GetTicks();
 					get_level_size(level, n, s);
 					board = make_board(level);
 				}
