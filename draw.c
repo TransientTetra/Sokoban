@@ -75,11 +75,15 @@ void draw_board(int n, int s, struct field **board, unsigned int level, SDL_Surf
 			{
 				DrawSurface(screen, wall, i * TILE + BOARD_X, j * TILE + BOARD_Y);
 			}
-			else if (board[i][j].player == 1)
+			else if (board[i][j].goal == 1)
 			{
-				DrawSurface(screen, player, i * TILE + BOARD_X, j * TILE + BOARD_Y);
+				DrawSurface(screen, goal, i * TILE + BOARD_X, j * TILE + BOARD_Y);
 			}
-			else if (board[i][j].barrel == 1)
+			else if (board[i][j].floor == 1)
+			{
+				DrawSurface(screen, floor, i * TILE + BOARD_X, j * TILE + BOARD_Y);
+			}
+			if (board[i][j].barrel == 1)
 			{
 				if (board[i][j].goal == 1)
 				{
@@ -90,13 +94,9 @@ void draw_board(int n, int s, struct field **board, unsigned int level, SDL_Surf
 					DrawSurface(screen, barrel, i * TILE + BOARD_X, j * TILE + BOARD_Y);
 				}
 			}
-			else if (board[i][j].goal == 1)
+			if (board[i][j].player == 1)
 			{
-				DrawSurface(screen, goal, i * TILE + BOARD_X, j * TILE + BOARD_Y);
-			}
-			else if (board[i][j].floor == 1)
-			{
-				DrawSurface(screen, floor, i * TILE + BOARD_X, j * TILE + BOARD_Y);
+				DrawSurface(screen, player, i * TILE + BOARD_X, j * TILE + BOARD_Y);
 			}
 		}
 	}

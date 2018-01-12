@@ -6,7 +6,10 @@
 
 //todo:
 //graphic loading into func?
-//animation in movement funcs
+//auto screen resize
+//code enter to change appearance
+//goal barrel graphic
+//player graphic flipping left right
 
 //bugs:
 //(fixed)time bug!!!
@@ -178,7 +181,6 @@ int main(int argc, char const *argv[])
 		board = make_board(level);
 
 
-		double distance = 0;
 		short int win = 0;
 		int n = 0, s = 0;
 		get_level_size(level, n, s);
@@ -192,7 +194,6 @@ int main(int argc, char const *argv[])
 			delta = (t2 - t1) * 0.001;
 			t1 = t2;
 			global_time += delta;
-			distance += PLAYERSPEED * delta;
 
 
 			SDL_FillRect(screen, NULL, black);
@@ -237,19 +238,19 @@ int main(int argc, char const *argv[])
 								}
 								break;
 							case SDLK_DOWN:
-								move_down(board, n, s, move_counter, push_counter);
+								move_down(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_UP:
-								move_up(board, n, s, move_counter, push_counter);
+								move_up(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_RIGHT:
-								move_right(board, n, s, move_counter, push_counter);
+								move_right(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_LEFT:
-								move_left(board, n, s, move_counter, push_counter);
+								move_left(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 						}

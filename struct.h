@@ -8,7 +8,7 @@
 #define BOARD_X 64
 #define BOARD_Y 64
 #define TILE 32
-#define PLAYERSPEED 1
+#define PLAYERSPEED 300
 
 struct field
 {

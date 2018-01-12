@@ -296,7 +296,9 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			{
 				DrawString(screen, screen->w / 2 - strlen("Currently sorting by least moves") * 8 / 2, TILE + TILE / 2, "Currently sorting by least moves", charset);
 			}
-			DrawString(screen, screen->w / 2 - strlen("No.       Time [s]       Number of moves") * 8 / 2, 2 * TILE, "No.       Time [s]       Number of moves", charset);
+			DrawString(screen, screen->w / 3 - strlen("No.") * 8 / 2, 2 * TILE, "No.", charset);
+			DrawString(screen, screen->w / 2 - strlen("Time [s]") * 8 / 2, 2 * TILE, "Time [s]", charset);
+			DrawString(screen, screen->w * 2 / 3 - strlen("Moves") * 8 / 2, 2 * TILE, "Moves", charset);
 			
 			if (amount_scores == 0)
 			{
@@ -367,11 +369,11 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			for (int i = 0; i < amount_scores; ++i)
 			{
 				sprintf(text, "%d.", scores[i].number);
-				DrawString(screen, 445, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w / 3 - strlen(text), 2 * TILE + (i + 1) * TILE / 2, text, charset);
 				sprintf(text, "%d s", scores[i].time);
-				DrawString(screen, 555 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
 				sprintf(text, "%d", scores[i].moves);
-				DrawString(screen, 700 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w * 2 / 3 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
 			}
 		}
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
