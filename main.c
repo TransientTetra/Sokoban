@@ -5,11 +5,16 @@
 #include "memory.h"
 
 //todo:
-//graphic loading into func?
-//auto screen resize
 //code enter to change appearance
 //goal barrel graphic
+//graphic loading into func?
+//auto screen resize
 //player graphic flipping left right
+//change charset
+//make menu better looking
+//change how menu functions (make it return a value like level selector)
+//divise display from menu functions
+//organise header linking
 
 //bugs:
 //(fixed)time bug!!!
@@ -214,17 +219,6 @@ int main(int argc, char const *argv[])
 						switch (event.key.keysym.sym)
 						{
 							case SDLK_ESCAPE:
-								del_board(board, n);
-								quit = 1;
-								break;
-							case SDLK_n:
-								del_board(board, n);
-								board = make_board(level);
-								global_time = 0;
-								move_counter = 0;
-								push_counter = 0;
-								break;
-							case SDLK_m:
 								global_time = 0;
 								del_board(board, n);
 								move_counter = 0;
@@ -237,20 +231,27 @@ int main(int argc, char const *argv[])
 									board = make_board(level);
 								}
 								break;
+							case SDLK_n:
+								del_board(board, n);
+								board = make_board(level);
+								global_time = 0;
+								move_counter = 0;
+								push_counter = 0;
+								break;
 							case SDLK_DOWN:
-								move_down(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
+								move_down(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_UP:
-								move_up(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
+								move_up(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_RIGHT:
-								move_right(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
+								move_right(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 							case SDLK_LEFT:
-								move_left(level, blue, global_time, charset, renderer, scrtex, screen, player, barrel, floor, goal, board, n, s, move_counter, push_counter);
+								move_left(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
 								break;
 						}

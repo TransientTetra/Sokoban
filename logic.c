@@ -206,10 +206,6 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 				case SDL_KEYDOWN:
 					switch (event.key.keysym.sym)
 					{
-						case SDLK_ESCAPE:
-							choice = 1;
-							quit = 1;
-							break;
 						case SDLK_DOWN:
 							if (highlight < 3)
 							{
