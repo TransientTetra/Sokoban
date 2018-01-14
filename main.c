@@ -187,6 +187,7 @@ int main(int argc, char const *argv[])
 
 
 		short int win = 0;
+		short int flip = 0;
 		int n = 0, s = 0;
 		get_level_size(level, n, s);
 
@@ -249,10 +250,18 @@ int main(int argc, char const *argv[])
 							case SDLK_RIGHT:
 								move_right(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
+								if (flip == 1)
+								{
+									flip = 0;
+								}
 								break;
 							case SDLK_LEFT:
 								move_left(board, n, s, move_counter, push_counter);
 								win = check_win(board, n, s);
+								if (flip == 0)
+								{
+									flip = 1;
+								}
 								break;
 						}
 						break;

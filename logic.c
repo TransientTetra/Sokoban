@@ -122,14 +122,14 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 	{
 		SDL_FillRect(screen, NULL, black);
 
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
-		DrawString(screen, screen->w / 2 - strlen("CHOOSE LEVEL") * 8 / 2, 11, "CHOOSE LEVEL", charset);
+		select_box("CHOOSE LEVEL", highlight, 0, screen, charset, blue, green);
+		select_box("Return to main menu", highlight, 1, screen, charset, blue, green);
 
 		for (int i = 0; i < amount_levels; ++i)
 		{
 			char text[16];
 			sprintf(text, "%d", levels[i]);
-			select_box(text, highlight, i + 1, screen, charset, blue, green);
+			select_box(text, highlight, i + 2, screen, charset, blue, green);
 		}
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -144,7 +144,7 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 					switch (event.key.keysym.sym)
 					{
 						case SDLK_DOWN:
-							if (highlight < amount_levels)
+							if (highlight < amount_levels + 1)
 							{
 								++highlight;
 							}
@@ -158,10 +158,14 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 						case SDLK_RETURN:
 							for (int i = 0; i < amount_levels; ++i)
 							{
-								if (highlight == i + 1)
+								if (highlight == i + 2)
 								{
 									return levels[i];									
 									free(levels);
+								}
+								if (highlight == 1)
+								{
+									return 0;
 								}
 							}
 							break;
