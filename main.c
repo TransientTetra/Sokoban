@@ -15,6 +15,9 @@
 //change how menu functions (make it return a value like level selector)
 //divise display from menu functions
 //organise header linking
+//change level so that level.ini is unnecessary
+//change level extensions to .sok or something
+//menu wrapping around when selecting
 
 //bugs:
 //(fixed)time bug!!!
