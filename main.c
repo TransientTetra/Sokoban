@@ -8,7 +8,6 @@
 //code enter to change appearance
 //goal barrel graphic
 //auto screen resize
-//player graphic flipping left right
 //change charset
 //make menu better looking
 //change how menu functions (make it return a value like level selector)
@@ -16,13 +15,13 @@
 //organise header linking
 //change level so that level.ini is unnecessary
 //menu wrapping around when selecting
+//center player body
 
 //bugs:
 //(fixed)time bug!!!
 //(fixed)seg fault (choose level->enter game->m to menu->choose level->esc to menu->quit)
 //(fixed)corrupted size vs prev_size (seen once, unseen since; fixed along with munmap?)
 //(fixed)munmap_chunk: invalid pointer (in display_leaderboard while sorting)
-
 
 int main(int argc, char const *argv[])
 {
@@ -169,20 +168,26 @@ int main(int argc, char const *argv[])
 								win = check_win(board, n, s);
 								break;
 							case SDLK_RIGHT:
-								move_right(board, n, s, move_counter, push_counter);
+								if (flip == 0)
+								{
+									move_right(board, n, s, move_counter, push_counter);
+								}
 								win = check_win(board, n, s);
 								if (flip == 1)
 								{
-									// player = flip_horizontal(player);
+									flip_horizontal(player);
 									flip = 0;
 								}
 								break;
 							case SDLK_LEFT:
-								move_left(board, n, s, move_counter, push_counter);
+								if (flip == 1)
+								{
+									move_left(board, n, s, move_counter, push_counter);
+								}
 								win = check_win(board, n, s);
 								if (flip == 0)
 								{
-									// player = flip_horizontal(player);
+									flip_horizontal(player);
 									flip = 1;
 								}
 								break;

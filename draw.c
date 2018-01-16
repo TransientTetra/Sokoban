@@ -2,6 +2,47 @@
 #include "struct.h"
 
 
+void put_pixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
+{
+//Convert the pixels to 32 bit
+Uint32 *pixels = (Uint32 *)surface->pixels;
+
+//Set the pixel
+pixels[ ( y * surface->w ) + x ] = pixel;
+
+}
+
+Uint32 get_pixel32( SDL_Surface *surface, int x, int y )
+{
+//Convert the pixels to 32 bit
+Uint32 *pixels = (Uint32 *)surface->pixels;
+
+//Get the requested pixel
+return pixels[ ( y * surface->w ) + x ];
+
+}
+
+void flip_horizontal( SDL_Surface*& image )
+{
+    // create a copy of the image
+    SDL_Surface* flipped_image = SDL_CreateRGBSurface( SDL_SWSURFACE, image->w, image->h, image->format->BitsPerPixel,
+        image->format->Rmask, image->format->Gmask, image->format->Bmask, image->format->Amask );
+	
+    // loop through pixels
+    for( int y=0; y<image->h; y++ )
+    {
+        for( int x=0; x<image->w; x++ )
+        {
+            // copy pixels, but reverse the x pixels!
+            put_pixel32( flipped_image, x, y, get_pixel32(image, image->w - x - 1, y) );
+        }
+    }
+
+    // free original and assign flipped to it
+    SDL_FreeSurface( image );
+    image = flipped_image;
+}
+
 // draw a text txt on surface screen, starting from the point (x, y)
 // charset is a 128x128 bitmap containing character images
 void DrawString(SDL_Surface *screen, int x, int y, const char *text, SDL_Surface *charset)

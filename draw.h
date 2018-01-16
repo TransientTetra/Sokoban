@@ -1,6 +1,13 @@
 #include"./SDL-2.0.7/include/SDL.h"
 #include"./SDL-2.0.7/include/SDL_main.h"
 
+
+void put_pixel32( SDL_Surface *surface, int x, int y, Uint32 pixel );
+
+Uint32 get_pixel32( SDL_Surface *surface, int x, int y );
+
+void flip_horizontal( SDL_Surface*& image );
+
 // draw a text txt on surface screen, starting from the point (x, y)
 // charset is a 128x128 bitmap containing character images
 void DrawString(SDL_Surface *screen, int x, int y, const char *text, SDL_Surface *charset);
