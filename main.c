@@ -7,7 +7,6 @@
 //todo:
 //code enter to change appearance
 //goal barrel graphic
-//graphic loading into func?
 //auto screen resize
 //player graphic flipping left right
 //change charset
@@ -16,7 +15,6 @@
 //divise display from menu functions
 //organise header linking
 //change level so that level.ini is unnecessary
-//change level extensions to .sok or something
 //menu wrapping around when selecting
 
 //bugs:
@@ -67,113 +65,18 @@ int main(int argc, char const *argv[])
 
 	SDL_ShowCursor(SDL_DISABLE);
 
-	{
-		charset = SDL_LoadBMP("./cs8x8.bmp");
-		if(charset == NULL)
-		{
-			printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-		SDL_SetColorKey(charset, true, 0x000000);
-
-		player = SDL_LoadBMP("./art/player.bmp");
-		if(player == NULL)
-		{
-			printf("SDL_LoadBMP(player.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-
-		floor = SDL_LoadBMP("./art/floor.bmp");
-		if(floor == NULL)
-		{
-			printf("SDL_LoadBMP(floor.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(player);
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-
-		wall = SDL_LoadBMP("./art/wall.bmp");
-		if(wall == NULL)
-		{
-			printf("SDL_LoadBMP(wall.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(floor);
-			SDL_FreeSurface(player);
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-
-		barrel = SDL_LoadBMP("./art/barrel.bmp");
-		if(barrel == NULL)
-		{
-			printf("SDL_LoadBMP(barrel.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(wall);
-			SDL_FreeSurface(floor);
-			SDL_FreeSurface(player);
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-
-		goal = SDL_LoadBMP("./art/goal.bmp");
-		if(goal == NULL)
-		{
-			printf("SDL_LoadBMP(goal.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(barrel);
-			SDL_FreeSurface(wall);
-			SDL_FreeSurface(floor);
-			SDL_FreeSurface(player);
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}
-
-		goal_barrel = SDL_LoadBMP("./art/goal_barrel.bmp");
-		if(goal_barrel == NULL)
-		{
-			printf("SDL_LoadBMP(goal_barrel.bmp) error: %s\n", SDL_GetError());
-			SDL_FreeSurface(goal);
-			SDL_FreeSurface(barrel);
-			SDL_FreeSurface(wall);
-			SDL_FreeSurface(floor);
-			SDL_FreeSurface(player);
-			SDL_FreeSurface(charset);
-			SDL_FreeSurface(screen);
-			SDL_DestroyTexture(scrtex);
-			SDL_DestroyWindow(window);
-			SDL_DestroyRenderer(renderer);
-			SDL_Quit();
-			return 1;
-		}	
-	}
+	load_graphics(
+	&screen,
+	&charset,
+	&player, "./art/player.bmp",
+	&floor, "./art/floor.bmp",
+	&barrel, "./art/barrel.bmp",
+	&wall, "./art/wall.bmp",
+	&goal, "./art/goal.bmp",
+	&goal_barrel, "./art/goal_barrel.bmp",
+	&scrtex,
+	&window,
+	&renderer);
 
 	char text[128];
 	int black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
@@ -242,6 +145,20 @@ int main(int argc, char const *argv[])
 								global_time = 0;
 								move_counter = 0;
 								push_counter = 0;
+								break;
+							case SDLK_h:
+								load_graphics(
+								&screen,
+								&charset,
+								&player, "./art/player_hawaii.bmp",
+								&floor, "./art/floor_hawaii.bmp",
+								&barrel, "./art/barrel_hawaii.bmp",
+								&wall, "./art/wall_hawaii.bmp",
+								&goal, "./art/goal_hawaii.bmp",
+								&goal_barrel, "./art/goal_barrel_hawaii.bmp",
+								&scrtex,
+								&window,
+								&renderer);
 								break;
 							case SDLK_DOWN:
 								move_down(board, n, s, move_counter, push_counter);
