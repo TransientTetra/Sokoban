@@ -16,8 +16,10 @@
 //change level so that level.ini is unnecessary
 //menu wrapping around when selecting
 //center player body
+//change all ints that can be changed to short
 
 //bugs:
+//(fixed)flipping after loading hawaii is inversed
 //(fixed)time bug!!!
 //(fixed)seg fault (choose level->enter game->m to menu->choose level->esc to menu->quit)
 //(fixed)corrupted size vs prev_size (seen once, unseen since; fixed along with munmap?)
@@ -158,6 +160,10 @@ int main(int argc, char const *argv[])
 								&scrtex,
 								&window,
 								&renderer);
+								if (flip == 1)
+								{
+									flip_horizontal(player);
+								}
 								break;
 							case SDLK_DOWN:
 								move_down(board, n, s, move_counter, push_counter);
