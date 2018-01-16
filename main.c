@@ -25,6 +25,7 @@
 //(fixed)corrupted size vs prev_size (seen once, unseen since; fixed along with munmap?)
 //(fixed)munmap_chunk: invalid pointer (in display_leaderboard while sorting)
 
+
 int main(int argc, char const *argv[])
 {
 	struct field **board;
@@ -255,6 +256,7 @@ int main(int argc, char const *argv[])
 								win = check_win(board, n, s);
 								if (flip == 1)
 								{
+									// player = flip_horizontal(player);
 									flip = 0;
 								}
 								break;
@@ -263,6 +265,7 @@ int main(int argc, char const *argv[])
 								win = check_win(board, n, s);
 								if (flip == 0)
 								{
+									// player = flip_horizontal(player);
 									flip = 1;
 								}
 								break;
