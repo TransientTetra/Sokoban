@@ -17,7 +17,7 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green);
 
 //draws a selector box, for menu
-void select_box(const char *text, int highlight, int n, SDL_Surface *screen, SDL_Surface *charset, int blue, int green);
+void select_box(const char *text, int highlight, int n, int vertical_shift, SDL_Surface *screen, SDL_Surface *charset, int blue, int green);
 
 //displays leaderboard from file for a given level
 void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int blue);

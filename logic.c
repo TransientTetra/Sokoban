@@ -86,17 +86,17 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 }
 
 //draws a selector box, for menu
-void select_box(const char *text, int highlight, int n, SDL_Surface *screen, SDL_Surface *charset, int blue, int green)
+void select_box(const char *text, int highlight, int n, int vertical_shift, SDL_Surface *screen, SDL_Surface *charset, int blue, int green)
 {
 	if (highlight == n)
 	{
-		DrawRectangle(screen, 4, 4 + n * TILE + n * 2, SCREEN_WIDTH - 8, TILE, green, green);
+		DrawRectangle(screen, screen->w / 3, 4 + n * TILE + n * 2 + vertical_shift, screen->w / 3, TILE, green, green);
 	}
 	else
 	{			
-		DrawRectangle(screen, 4, 4 + n * TILE + n * 2, SCREEN_WIDTH - 8, TILE, blue, blue);
+		DrawRectangle(screen, screen->w / 3, 4 + n * TILE + n * 2 + vertical_shift, screen->w / 3, TILE, blue, blue);
 	}
-	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 13 + n * TILE + n * 2, text, charset);
+	DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 13 + n * TILE + n * 2 + vertical_shift, text, charset);
 }
 
 //menu for level selection
@@ -122,14 +122,14 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 	{
 		SDL_FillRect(screen, NULL, black);
 
-		select_box("CHOOSE LEVEL", highlight, 0, screen, charset, blue, green);
-		select_box("Return to main menu", highlight, 1, screen, charset, blue, green);
+		select_box("CHOOSE LEVEL", highlight, 0, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
+		select_box("Return to main menu", highlight, 1, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
 
 		for (int i = 0; i < amount_levels; ++i)
 		{
 			char text[16];
 			sprintf(text, "%d", levels[i]);
-			select_box(text, highlight, i + 2, screen, charset, blue, green);
+			select_box(text, highlight, i + 2, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
 		}
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -148,12 +148,14 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 							{
 								++highlight;
 							}
+							else highlight = 1;
 							break;
 						case SDLK_UP:
 							if (highlight > 1)
 							{
 								--highlight;
 							}
+							else highlight = amount_levels + 1;
 							break;
 						case SDLK_RETURN:
 							for (int i = 0; i < amount_levels; ++i)
@@ -192,12 +194,12 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 	{
 		SDL_FillRect(screen, NULL, black);
 
-		DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
-		DrawString(screen, screen->w / 2 - strlen("MENU") * 8 / 2, 11, "MENU", charset);
+		DrawRectangle(screen, screen->w / 3, 4 + VERTICAL_MENU_ORIENT, screen->w / 3, TILE, blue, blue);
+		DrawString(screen, screen->w / 2 - strlen("MENU") * 8 / 2, 11 + VERTICAL_MENU_ORIENT, "MENU", charset);
 
-		select_box("CHOOSE LEVEL", highlight, 1, screen, charset, blue, green);
-		select_box("LEADERBOARD", highlight, 2, screen, charset, blue, green);
-		select_box("QUIT", highlight, 3, screen, charset, blue, green);
+		select_box("CHOOSE LEVEL", highlight, 1, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
+		select_box("LEADERBOARD", highlight, 2, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
+		select_box("QUIT", highlight, 3, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -215,12 +217,14 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 							{
 								++highlight;
 							}
+							else highlight = 1;
 							break;
 						case SDLK_UP:
 							if (highlight > 1)
 							{
 								--highlight;
 							}
+							else highlight = 3;
 							break;
 						case SDLK_RETURN:
 							switch (highlight)

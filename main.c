@@ -5,6 +5,7 @@
 #include "memory.h"
 
 //todo:
+//make menu wallpaper
 //code enter to change appearance
 //goal barrel graphic
 //auto screen resize
@@ -15,7 +16,6 @@
 //organise header linking
 //change level so that level.ini is unnecessary
 //menu wrapping around when selecting
-//center player body
 //change all ints that can be changed to short
 
 //bugs:
