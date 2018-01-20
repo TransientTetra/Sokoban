@@ -36,13 +36,13 @@ int check_win(struct field **board, int n, int s)
 }
 
 //displays a prompt upon winning
-int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int &quit, int level, int move_counter, int push_counter, double time)
+int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int color, int &quit, int level, int move_counter, int push_counter, double time)
 {
 	SDL_Event event;
 	char text[128];
 	while (quit == 0)
 	{
-		SDL_FillRect(screen, NULL, blue);
+		SDL_FillRect(screen, NULL, color);
 
 		sprintf(text, "Congratulations! You completed level %d in %d moves including %d pushes, in %.1lf seconds!", level, move_counter, push_counter, time);
 		DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2 * TILE, text, charset);
@@ -100,7 +100,7 @@ void select_box(const char *text, int highlight, int n, int vertical_shift, SDL_
 }
 
 //menu for level selection
-int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green)
+int level_selector(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color)
 {
 	FILE *level_list = fopen("./levels/levels.ini", "r");
 	int amount_levels;
@@ -120,16 +120,16 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 	int highlight = 1;
 	while(choice == 0)
 	{
-		SDL_FillRect(screen, NULL, black);
+		DrawSurface(screen, wallpaper, 300, 400);
 
-		select_box("CHOOSE LEVEL", highlight, 0, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
-		select_box("Return to main menu", highlight, 1, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
+		select_box("CHOOSE LEVEL", highlight, 0, VERTICAL_MENU_ORIENT / 2, screen, charset, main_color, secondary_color);
+		select_box("Return to main menu", highlight, 1, VERTICAL_MENU_ORIENT / 2, screen, charset, main_color, secondary_color);
 
 		for (int i = 0; i < amount_levels; ++i)
 		{
 			char text[16];
 			sprintf(text, "%d", levels[i]);
-			select_box(text, highlight, i + 2, VERTICAL_MENU_ORIENT / 2, screen, charset, blue, green);
+			select_box(text, highlight, i + 2, VERTICAL_MENU_ORIENT / 2, screen, charset, main_color, secondary_color);
 		}
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -184,7 +184,7 @@ int level_selector(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *rende
 }
 
 //main menu
-void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int blue, int black, int green, int &level, int &quit)
+void menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color, int &level, int &quit)
 {
 	SDL_Event event;
 	int level_leaderboard = 0;
@@ -192,14 +192,15 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 	int highlight = 1;
 	while(choice == 0)
 	{
-		SDL_FillRect(screen, NULL, black);
+		DrawSurface(screen, wallpaper, 300, 400);
 
-		DrawRectangle(screen, screen->w / 3, 4 + VERTICAL_MENU_ORIENT, screen->w / 3, TILE, blue, blue);
+		DrawRectangle(screen, screen->w / 3, 4 + VERTICAL_MENU_ORIENT, screen->w / 3, TILE, main_color, main_color);
 		DrawString(screen, screen->w / 2 - strlen("MENU") * 8 / 2, 11 + VERTICAL_MENU_ORIENT, "MENU", charset);
 
-		select_box("CHOOSE LEVEL", highlight, 1, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
-		select_box("LEADERBOARD", highlight, 2, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
-		select_box("QUIT", highlight, 3, VERTICAL_MENU_ORIENT, screen, charset, blue, green);
+		select_box("CHOOSE LEVEL", highlight, 1, VERTICAL_MENU_ORIENT, screen, charset, main_color, secondary_color);
+		select_box("LEADERBOARD", highlight, 2, VERTICAL_MENU_ORIENT, screen, charset, main_color, secondary_color);
+		select_box("INPUT CODE", highlight, 3, VERTICAL_MENU_ORIENT, screen, charset, main_color, secondary_color);
+		select_box("QUIT", highlight, 4, VERTICAL_MENU_ORIENT, screen, charset, main_color, secondary_color);
 
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
 		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
@@ -213,7 +214,7 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 					switch (event.key.keysym.sym)
 					{
 						case SDLK_DOWN:
-							if (highlight < 3)
+							if (highlight < 4)
 							{
 								++highlight;
 							}
@@ -224,13 +225,13 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 							{
 								--highlight;
 							}
-							else highlight = 3;
+							else highlight = 4;
 							break;
 						case SDLK_RETURN:
 							switch (highlight)
 							{
 								case 1:
-									level = level_selector(screen, scrtex, renderer, charset, blue, black, green);
+									level = level_selector(wallpaper, screen, scrtex, renderer, charset, main_color, secondary_color);
 									if (level != 0)
 									{										
 										choice = 1;
@@ -241,13 +242,16 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 									}
 									break;
 								case 2:
-									level_leaderboard = level_selector(screen, scrtex, renderer, charset, blue, black, green);
+									level_leaderboard = level_selector(wallpaper, screen, scrtex, renderer, charset, main_color, secondary_color);
 									if (level_leaderboard != 0)
 									{
-										display_leaderboard(screen, scrtex, renderer, charset, level_leaderboard, blue);
+										display_leaderboard(screen, scrtex, renderer, charset, level_leaderboard, main_color);
 									}
 									break;
 								case 3:
+
+									break;
+								case 4:
 									quit = 1;
 									choice = 1;
 									break;
@@ -266,7 +270,7 @@ void menu(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_
 }
 
 //displays leaderboard from file for a given level
-void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int blue)
+void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int color)
 {
 	struct score *scores;
 	char name[32];
@@ -280,7 +284,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 	int sort = 0;
 	while (quit == 0)
 	{
-		SDL_FillRect(screen, NULL, blue);
+		SDL_FillRect(screen, NULL, color);
 
 		if (leaderboard == NULL)
 		{

@@ -25,6 +25,7 @@ int load_graphics(
 	SDL_Surface **wall, const char* wall_graphic_location,
 	SDL_Surface **goal, const char* goal_graphic_location,
 	SDL_Surface **goal_barrel, const char* goal_barrel_graphic_location,
+	SDL_Surface **wallpaper, const char* wallpaper_location,
 	SDL_Texture **scrtex,
 	SDL_Window **window,
 	SDL_Renderer **renderer);

@@ -5,7 +5,6 @@
 #include "memory.h"
 
 //todo:
-//make menu wallpaper
 //code enter to change appearance
 //goal barrel graphic
 //auto screen resize
@@ -33,7 +32,7 @@ int main(int argc, char const *argv[])
 	int t1, t2, quit, rc;
 	double delta, global_time;
 	SDL_Event event;
-	SDL_Surface *screen, *charset;
+	SDL_Surface *screen, *charset, *wallpaper;
 	SDL_Surface *player, *floor, *barrel, *wall, *goal, *goal_barrel;
 	SDL_Texture *scrtex;
 	SDL_Window *window;
@@ -75,19 +74,19 @@ int main(int argc, char const *argv[])
 	&wall, "./art/wall.bmp",
 	&goal, "./art/goal.bmp",
 	&goal_barrel, "./art/goal_barrel.bmp",
+	&wallpaper, "./art/wallpaper_hawaii.bmp",
 	&scrtex,
 	&window,
 	&renderer);
 
 	char text[128];
 	int black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-	int green = SDL_MapRGB(screen->format, 0x00, 0xFF, 0x00);
-	int red = SDL_MapRGB(screen->format, 0xFF, 0x00, 0x00);
-	int blue = SDL_MapRGB(screen->format, 0x11, 0x11, 0xCC);
+	int pink = SDL_MapRGB(screen->format, 0xFF, 0x4D, 0xFF);
+	int sky_blue = SDL_MapRGB(screen->format, 0x00, 0x66, 0xFF);
 
 	quit = 0;
 
-	menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+	menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
 
 	if (quit == 0)
 	{
@@ -113,7 +112,7 @@ int main(int argc, char const *argv[])
 			SDL_FillRect(screen, NULL, black);
 			draw_board(n, s, board, level, screen, player, floor, barrel, wall, goal, goal_barrel);
 
-			DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, blue, blue);
+			DrawRectangle(screen, 4, 4, SCREEN_WIDTH - 8, TILE, sky_blue, sky_blue);
 			sprintf(text, "Level %d | Elapsed time: %.1lf s | Moves: %d | Pushes: %d", level, global_time, move_counter, push_counter);
 			DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 10, text, charset);
 			SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -132,7 +131,7 @@ int main(int argc, char const *argv[])
 								del_board(board, n);
 								move_counter = 0;
 								push_counter = 0;
-								menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+								menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
 								t1 = SDL_GetTicks();
 								if (level != 0)
 								{
@@ -157,6 +156,7 @@ int main(int argc, char const *argv[])
 								&wall, "./art/wall_hawaii.bmp",
 								&goal, "./art/goal_hawaii.bmp",
 								&goal_barrel, "./art/goal_barrel_hawaii.bmp",
+								&wallpaper, "./art/wallpaper_hawaii.bmp",
 								&scrtex,
 								&window,
 								&renderer);
@@ -207,7 +207,7 @@ int main(int argc, char const *argv[])
 
 			if (win == 1)
 			{
-				int win_menu_check = win_prompt(screen, scrtex, renderer, charset, blue, quit, level, move_counter, push_counter, global_time);
+				int win_menu_check = win_prompt(screen, scrtex, renderer, charset, sky_blue, quit, level, move_counter, push_counter, global_time);
 				if (win_menu_check == 1)
 				{
 					quit = 1;
@@ -220,7 +220,7 @@ int main(int argc, char const *argv[])
 					global_time = 0;
 					move_counter = 0;
 					push_counter = 0;
-					menu(screen, scrtex, renderer, charset, blue, black, green, level, quit);
+					menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
 					t1 = SDL_GetTicks();
 					get_level_size(level, n, s);
 					board = make_board(level);

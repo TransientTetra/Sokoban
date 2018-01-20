@@ -114,6 +114,7 @@ int load_graphics(
 	SDL_Surface **wall, const char* wall_graphic_location,
 	SDL_Surface **goal, const char* goal_graphic_location,
 	SDL_Surface **goal_barrel, const char* goal_barrel_graphic_location,
+	SDL_Surface **wallpaper, const char* wallpaper_location,
 	SDL_Texture **scrtex,
 	SDL_Window **window,
 	SDL_Renderer **renderer)
@@ -210,6 +211,25 @@ int load_graphics(
 	if(*goal_barrel == NULL)
 	{
 		printf("SDL_LoadBMP(goal_barrel.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(*goal);
+		SDL_FreeSurface(*barrel);
+		SDL_FreeSurface(*wall);
+		SDL_FreeSurface(*floor);
+		SDL_FreeSurface(*player);
+		SDL_FreeSurface(*charset);
+		SDL_FreeSurface(*screen);
+		SDL_DestroyTexture(*scrtex);
+		SDL_DestroyWindow(*window);
+		SDL_DestroyRenderer(*renderer);
+		SDL_Quit();
+		return 1;
+	}	
+
+	*wallpaper = SDL_LoadBMP(wallpaper_location);
+	if(*wallpaper == NULL)
+	{
+		printf("SDL_LoadBMP(wallpaper.bmp) error: %s\n", SDL_GetError());
+		SDL_FreeSurface(*goal_barrel);
 		SDL_FreeSurface(*goal);
 		SDL_FreeSurface(*barrel);
 		SDL_FreeSurface(*wall);
