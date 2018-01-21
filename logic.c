@@ -184,7 +184,7 @@ int level_selector(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scr
 }
 
 //main menu
-void menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color, int &level, int &quit)
+int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color, int &level, int &graphics_version)
 {
 	SDL_Event event;
 	int level_leaderboard = 0;
@@ -234,7 +234,7 @@ void menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_
 									level = level_selector(wallpaper, screen, scrtex, renderer, charset, main_color, secondary_color);
 									if (level != 0)
 									{										
-										choice = 1;
+										return 0;
 									}
 									else
 									{										
@@ -249,11 +249,13 @@ void menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_
 									}
 									break;
 								case 3:
-
+									if (input_text("ENTER A SECRET CODE", screen, scrtex, renderer, charset, main_color) == HAWAII_CODE)
+									{
+										graphics_version = 1;
+									}
 									break;
 								case 4:
-									quit = 1;
-									choice = 1;
+									return 1;
 									break;
 							}
 							break;
@@ -262,11 +264,133 @@ void menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_
 				case SDL_KEYUP:
 					break;
 				case SDL_QUIT:
-					quit = 1;
+					return 1;
 					break;
 			}
 		}
 	}
+}
+
+//general purpose menu for text input, returns input text
+const char * input_text(const char *title, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int color)
+{
+	char *return_text;
+	return_text = (char *) malloc(32 * sizeof(char));
+	return_text[0] = '\0';
+	SDL_Event event;
+	while (1)
+	{
+		SDL_FillRect(screen, NULL, color);
+
+		DrawString(screen, screen->w / 2 - strlen(title) * 8 / 2, 4 * TILE, title, charset);
+		DrawString(screen, screen->w / 2 - strlen(return_text) * 8 / 2, 5 * TILE, return_text, charset);
+
+		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
+		SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+		SDL_RenderPresent(renderer);
+
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+				case SDL_KEYDOWN:
+					switch (event.key.keysym.sym)
+					{
+						case SDLK_ESCAPE:
+							return "0";
+							break;
+						case SDLK_RETURN:
+							return return_text;
+							break;
+						case SDLK_BACKSPACE:
+							return_text[strlen(return_text) - 1] = '\0';
+							break;
+						case SDLK_s:
+							strcat(return_text, "s");
+							break;
+						case SDLK_q:
+							strcat(return_text, "q");
+							break;
+						case SDLK_w:
+							strcat(return_text, "w");
+							break;
+						case SDLK_e:
+							strcat(return_text, "e");
+							break;
+						case SDLK_r:
+							strcat(return_text, "r");
+							break;
+						case SDLK_t:
+							strcat(return_text, "t");
+							break;
+						case SDLK_y:
+							strcat(return_text, "y");
+							break;
+						case SDLK_u:
+							strcat(return_text, "u");
+							break;
+						case SDLK_i:
+							strcat(return_text, "i");
+							break;
+						case SDLK_o:
+							strcat(return_text, "o");
+							break;
+						case SDLK_p:
+							strcat(return_text, "p");
+							break;
+						case SDLK_a:
+							strcat(return_text, "a");
+							break;
+						case SDLK_d:
+							strcat(return_text, "d");
+							break;
+						case SDLK_f:
+							strcat(return_text, "f");
+							break;
+						case SDLK_g:
+							strcat(return_text, "g");
+							break;
+						case SDLK_h:
+							strcat(return_text, "h");
+							break;
+						case SDLK_j:
+							strcat(return_text, "j");
+							break;
+						case SDLK_k:
+							strcat(return_text, "k");
+							break;
+						case SDLK_l:
+							strcat(return_text, "l");
+							break;
+						case SDLK_z:
+							strcat(return_text, "z");
+							break;
+						case SDLK_x:
+							strcat(return_text, "x");
+							break;
+						case SDLK_c:
+							strcat(return_text, "c");
+							break;
+						case SDLK_v:
+							strcat(return_text, "v");
+							break;
+						case SDLK_b:
+							strcat(return_text, "b");
+							break;
+						case SDLK_n:
+							strcat(return_text, "n");
+							break;
+						case SDLK_m:
+							strcat(return_text, "m");
+							break;
+					}
+					break;
+				case SDL_QUIT:
+					return "0";
+					break;
+			}
+		}
+	}	
 }
 
 //displays leaderboard from file for a given level

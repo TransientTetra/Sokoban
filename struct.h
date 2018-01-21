@@ -2,6 +2,7 @@
 #include "./SDL-2.0.7/include/SDL_main.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define SCREEN_WIDTH	800
 #define SCREEN_HEIGHT	600
@@ -9,15 +10,16 @@
 #define BOARD_Y 64
 #define TILE 32
 #define VERTICAL_MENU_ORIENT 200
+#define HAWAII_CODE "havana"
 
 
 struct field
 {
-	unsigned int player;
-	unsigned int wall;
-	unsigned int barrel;
-	unsigned int goal;
-	unsigned int floor;
+	unsigned short int player;
+	unsigned short int wall;
+	unsigned short int barrel;
+	unsigned short int goal;
+	unsigned short int floor;
 };
 
 struct score

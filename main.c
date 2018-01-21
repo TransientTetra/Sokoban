@@ -5,16 +5,15 @@
 #include "memory.h"
 
 //todo:
-//code enter to change appearance
+//add name to leaderboards
+//finish code enter to change appearance
 //goal barrel graphic
 //auto screen resize
 //change charset
-//make menu better looking
-//change how menu functions (make it return a value like level selector)
 //divise display from menu functions
 //organise header linking
 //change level so that level.ini is unnecessary
-//menu wrapping around when selecting
+//level selector allowing more than some levels
 //change all ints that can be changed to short
 
 //bugs:
@@ -26,6 +25,7 @@
 
 int main(int argc, char const *argv[])
 {
+	int graphics_version = 0;
 	struct field **board;
 	int level = 0;
 	unsigned int push_counter = 0, move_counter = 0;
@@ -74,7 +74,7 @@ int main(int argc, char const *argv[])
 	&wall, "./art/wall.bmp",
 	&goal, "./art/goal.bmp",
 	&goal_barrel, "./art/goal_barrel.bmp",
-	&wallpaper, "./art/wallpaper_hawaii.bmp",
+	&wallpaper, "./art/wallpaper.bmp",
 	&scrtex,
 	&window,
 	&renderer);
@@ -86,13 +86,13 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
+	quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
 
 	if (quit == 0)
 	{
 		board = make_board(level);
 
-
+		unsigned short int change_graphics = 0;
 		short int win = 0;
 		short int flip = 0;
 		int n = 0, s = 0;
@@ -107,6 +107,43 @@ int main(int argc, char const *argv[])
 			delta = (t2 - t1) * 0.001;
 			t1 = t2;
 			global_time += delta;
+
+			if (change_graphics = 1)
+			{
+				change_graphics = 0;
+				if (graphics_version == 0)
+				{
+					load_graphics(
+					&screen,
+					&charset,
+					&player, "./art/player.bmp",
+					&floor, "./art/floor.bmp",
+					&barrel, "./art/barrel.bmp",
+					&wall, "./art/wall.bmp",
+					&goal, "./art/goal.bmp",
+					&goal_barrel, "./art/goal_barrel.bmp",
+					&wallpaper, "./art/wallpaper.bmp",
+					&scrtex,
+					&window,
+					&renderer);
+				}
+				else if (graphics_version == 1)
+				{					
+					load_graphics(
+					&screen,
+					&charset,
+					&player, "./art/player_hawaii.bmp",
+					&floor, "./art/floor_hawaii.bmp",
+					&barrel, "./art/barrel_hawaii.bmp",
+					&wall, "./art/wall_hawaii.bmp",
+					&goal, "./art/goal_hawaii.bmp",
+					&goal_barrel, "./art/goal_barrel_hawaii.bmp",
+					&wallpaper, "./art/wallpaper_hawaii.bmp",
+					&scrtex,
+					&window,
+					&renderer);
+				}
+			}
 
 
 			SDL_FillRect(screen, NULL, black);
@@ -131,7 +168,7 @@ int main(int argc, char const *argv[])
 								del_board(board, n);
 								move_counter = 0;
 								push_counter = 0;
-								menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
+								quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
 								t1 = SDL_GetTicks();
 								if (level != 0)
 								{
@@ -220,7 +257,7 @@ int main(int argc, char const *argv[])
 					global_time = 0;
 					move_counter = 0;
 					push_counter = 0;
-					menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, quit);
+					quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
 					t1 = SDL_GetTicks();
 					get_level_size(level, n, s);
 					board = make_board(level);
