@@ -24,6 +24,7 @@ struct field
 
 struct score
 {
+	char name[32];
 	int number;
 	int time;
 	int moves;

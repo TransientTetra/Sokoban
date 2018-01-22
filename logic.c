@@ -68,7 +68,7 @@ int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer,
 							return 0;
 							break;
 						case SDLK_l:
-							add_to_leaderboard(level, time, move_counter);
+							add_to_leaderboard(level, input_text("PLEASE ENTER YOUR NAME", screen, scrtex, renderer, charset, color), time, move_counter);
 							return 0;
 							break;
 					}
@@ -400,7 +400,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 {
 	struct score *scores;
 	char name[32];
-	sprintf(name, "./leaderboards/%d.txt", level);
+	sprintf(name, "./leaderboards/%d.ldr", level);
 	FILE *leaderboard = fopen(name, "r");
 
 	SDL_Event event;
@@ -452,8 +452,10 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			rewind(leaderboard);
 			for (int i = 0; i < amount_scores; ++i)
 			{
+				char temp_name[32];
 				int temp_time, temp_moves;
-				fscanf(leaderboard, "@%d,%d;", &temp_time, &temp_moves);
+				fscanf(leaderboard, "@%s,%d,%d;", temp_name, &temp_time, &temp_moves);
+				strcpy(scores[i].name, temp_name);
 				scores[i].time = temp_time;
 				scores[i].moves = temp_moves;
 				scores[i].number = i + 1;
@@ -560,11 +562,11 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 }
 
 //adds to leaderboard file of given level
-void add_to_leaderboard(int level, double time, int moves)
+void add_to_leaderboard(int level, const char *name, double time, int moves)
 {
 	char filename[32];
-	sprintf(filename, "./leaderboards/%d.txt", level);
+	sprintf(filename, "./leaderboards/%d.ldr", level);
 	FILE *leaderboard = fopen(filename, "a");
-	fprintf(leaderboard, "@%d,%d;", (int)time, moves);
+	fprintf(leaderboard, "@%s,%d,%d;", name, (int)time, moves);
 	fclose(leaderboard);
 }

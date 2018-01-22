@@ -26,4 +26,4 @@ const char * input_text(const char *title, SDL_Surface *screen, SDL_Texture *scr
 void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int level, int color);
 
 //adds to leaderboard
-void add_to_leaderboard(int level, double time, int moves);
+void add_to_leaderboard(int level, const char *name, double time, int moves);
