@@ -430,9 +430,10 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			{
 				DrawString(screen, screen->w / 2 - strlen("Currently sorting by least moves") * 8 / 2, TILE + TILE / 2, "Currently sorting by least moves", charset);
 			}
-			DrawString(screen, screen->w / 3 - strlen("No.") * 8 / 2, 2 * TILE, "No.", charset);
-			DrawString(screen, screen->w / 2 - strlen("Time [s]") * 8 / 2, 2 * TILE, "Time [s]", charset);
-			DrawString(screen, screen->w * 2 / 3 - strlen("Moves") * 8 / 2, 2 * TILE, "Moves", charset);
+			DrawString(screen, screen->w / 4 - strlen("No.") * 8 / 2 - screen->w / 8, 2 * TILE, "No.", charset);
+			DrawString(screen, screen->w / 2 - strlen("Name") * 8 / 2 - screen->w / 8, 2 * TILE, "Name", charset);
+			DrawString(screen, screen->w * 3 / 4 - strlen("Time [s]") * 8 / 2 - screen->w / 8, 2 * TILE, "Time [s]", charset);
+			DrawString(screen, screen->w - strlen("Moves") * 8 / 2 - screen->w / 8, 2 * TILE, "Moves", charset);
 			
 			if (amount_scores == 0)
 			{
@@ -454,7 +455,7 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			{
 				char temp_name[32];
 				int temp_time, temp_moves;
-				fscanf(leaderboard, "@%s,%d,%d;", temp_name, &temp_time, &temp_moves);
+				fscanf(leaderboard, "@%s %d,%d;", temp_name, &temp_time, &temp_moves);
 				strcpy(scores[i].name, temp_name);
 				scores[i].time = temp_time;
 				scores[i].moves = temp_moves;
@@ -477,6 +478,10 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 							int temp_moves = scores[i].moves;
 							scores[i].moves = scores[i + 1].moves;
 							scores[i + 1].moves = temp_moves;
+							char temp_name[32];
+							strcpy(temp_name, scores[i].name);
+							strcpy(scores[i].name, scores[i + 1].name);
+							strcpy(scores[i + 1].name, temp_name);
 						}
 					}
 				}
@@ -498,6 +503,10 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 							int temp_moves = scores[i].moves;
 							scores[i].moves = scores[i + 1].moves;
 							scores[i + 1].moves = temp_moves;
+							char temp_name[32];
+							strcpy(temp_name, scores[i].name);
+							strcpy(scores[i].name, scores[i + 1].name);
+							strcpy(scores[i + 1].name, temp_name);
 						}
 					}
 				}
@@ -505,11 +514,12 @@ void display_leaderboard(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer 
 			for (int i = 0; i < amount_scores; ++i)
 			{
 				sprintf(text, "%d.", scores[i].number);
-				DrawString(screen, screen->w / 3 - strlen(text), 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w / 4 - strlen(text) * 8 / 2 - screen->w / 8, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w / 2 - strlen(scores[i].name) * 8 / 2 - screen->w / 8, 2 * TILE + (i + 1) * TILE / 2, scores[i].name, charset);
 				sprintf(text, "%d s", scores[i].time);
-				DrawString(screen, screen->w / 2 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w * 3 / 4 - strlen(text) * 8 / 2 - screen->w / 8, 2 * TILE + (i + 1) * TILE / 2, text, charset);
 				sprintf(text, "%d", scores[i].moves);
-				DrawString(screen, screen->w * 2 / 3 - strlen(text) * 8 / 2, 2 * TILE + (i + 1) * TILE / 2, text, charset);
+				DrawString(screen, screen->w - strlen(text) * 8 / 2 - screen->w / 8, 2 * TILE + (i + 1) * TILE / 2, text, charset);
 			}
 		}
 		SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
@@ -567,6 +577,6 @@ void add_to_leaderboard(int level, const char *name, double time, int moves)
 	char filename[32];
 	sprintf(filename, "./leaderboards/%d.ldr", level);
 	FILE *leaderboard = fopen(filename, "a");
-	fprintf(leaderboard, "@%s,%d,%d;", name, (int)time, moves);
+	fprintf(leaderboard, "@%s %d,%d;", name, (int)time, moves);
 	fclose(leaderboard);
 }

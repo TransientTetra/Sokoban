@@ -5,7 +5,6 @@
 #include "memory.h"
 
 //todo:
-//add name to leaderboards
 //goal barrel graphic
 //add hawaii music
 //auto screen resize
