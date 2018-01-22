@@ -11,7 +11,7 @@ int check_win(struct field **board, int n, int s);
 int win_prompt(SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int color, int &quit, int level, int move_counter, int push_counter, double time);
 
 //main menu
-int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color,int secondary_color, int &level, int &graphics_version);
+int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color,int secondary_color, int &level, short int &graphics_version, short int &change_graphics);
 
 //menu for level selection
 int level_selector(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color);

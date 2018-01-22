@@ -6,8 +6,8 @@
 
 //todo:
 //add name to leaderboards
-//finish code enter to change appearance
 //goal barrel graphic
+//add hawaii music
 //auto screen resize
 //change charset
 //divise display from menu functions
@@ -25,7 +25,8 @@
 
 int main(int argc, char const *argv[])
 {
-	int graphics_version = 0;
+	short int graphics_version = 0;
+	short int change_graphics = 0;
 	struct field **board;
 	int level = 0;
 	unsigned int push_counter = 0, move_counter = 0;
@@ -86,13 +87,12 @@ int main(int argc, char const *argv[])
 
 	quit = 0;
 
-	quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
+	quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version, change_graphics);
 
 	if (quit == 0)
 	{
 		board = make_board(level);
 
-		unsigned short int change_graphics = 0;
 		short int win = 0;
 		short int flip = 0;
 		int n = 0, s = 0;
@@ -108,7 +108,7 @@ int main(int argc, char const *argv[])
 			t1 = t2;
 			global_time += delta;
 
-			if (change_graphics = 1)
+			if (change_graphics == 1)
 			{
 				change_graphics = 0;
 				if (graphics_version == 0)
@@ -126,6 +126,7 @@ int main(int argc, char const *argv[])
 					&scrtex,
 					&window,
 					&renderer);
+					flip = 0;
 				}
 				else if (graphics_version == 1)
 				{					
@@ -142,6 +143,7 @@ int main(int argc, char const *argv[])
 					&scrtex,
 					&window,
 					&renderer);
+					flip = 0;
 				}
 			}
 
@@ -168,7 +170,7 @@ int main(int argc, char const *argv[])
 								del_board(board, n);
 								move_counter = 0;
 								push_counter = 0;
-								quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
+								quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version, change_graphics);
 								t1 = SDL_GetTicks();
 								if (level != 0)
 								{
@@ -182,25 +184,6 @@ int main(int argc, char const *argv[])
 								global_time = 0;
 								move_counter = 0;
 								push_counter = 0;
-								break;
-							case SDLK_h:
-								load_graphics(
-								&screen,
-								&charset,
-								&player, "./art/player_hawaii.bmp",
-								&floor, "./art/floor_hawaii.bmp",
-								&barrel, "./art/barrel_hawaii.bmp",
-								&wall, "./art/wall_hawaii.bmp",
-								&goal, "./art/goal_hawaii.bmp",
-								&goal_barrel, "./art/goal_barrel_hawaii.bmp",
-								&wallpaper, "./art/wallpaper_hawaii.bmp",
-								&scrtex,
-								&window,
-								&renderer);
-								if (flip == 1)
-								{
-									flip_horizontal(player);
-								}
 								break;
 							case SDLK_DOWN:
 								move_down(board, n, s, move_counter, push_counter);
@@ -257,7 +240,7 @@ int main(int argc, char const *argv[])
 					global_time = 0;
 					move_counter = 0;
 					push_counter = 0;
-					quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version);
+					quit = menu(wallpaper, screen, scrtex, renderer, charset, sky_blue, pink, level, graphics_version, change_graphics);
 					t1 = SDL_GetTicks();
 					get_level_size(level, n, s);
 					board = make_board(level);

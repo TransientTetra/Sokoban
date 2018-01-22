@@ -184,7 +184,7 @@ int level_selector(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scr
 }
 
 //main menu
-int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color, int &level, int &graphics_version)
+int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_Renderer *renderer, SDL_Surface *charset, int main_color, int secondary_color, int &level, short int &graphics_version, short int &change_graphics)
 {
 	SDL_Event event;
 	int level_leaderboard = 0;
@@ -249,9 +249,11 @@ int menu(SDL_Surface *wallpaper, SDL_Surface *screen, SDL_Texture *scrtex, SDL_R
 									}
 									break;
 								case 3:
-									if (input_text("ENTER A SECRET CODE", screen, scrtex, renderer, charset, main_color) == HAWAII_CODE)
+									if (strcmp(input_text("ENTER A SECRET CODE", screen, scrtex, renderer, charset, main_color), HAWAII_CODE) == 0)
 									{
+										change_graphics = 1;
 										graphics_version = 1;
+										wallpaper = SDL_LoadBMP("./art/wallpaper_hawaii.bmp");
 									}
 									break;
 								case 4:
