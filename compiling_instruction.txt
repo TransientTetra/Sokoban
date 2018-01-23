@@ -1,1 +1,1 @@
-g++ main.c -o main.o -lSDL2x64 draw.h draw.c movement.c movement.h memory.h memory.c logic.h logic.c struct.h
+g++ main.c -o main.o -lSDL2 -lSDL2_mixer draw.h draw.c movement.c movement.h memory.h memory.c logic.h logic.c struct.h

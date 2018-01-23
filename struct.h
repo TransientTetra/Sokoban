@@ -1,5 +1,6 @@
 #include "./SDL-2.0.7/include/SDL.h"
 #include "./SDL-2.0.7/include/SDL_main.h"
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

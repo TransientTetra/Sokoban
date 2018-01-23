@@ -6,7 +6,6 @@
 
 //todo:
 //goal barrel graphic
-//add hawaii music
 //auto screen resize
 //change charset
 //divise display from menu functions
@@ -24,6 +23,7 @@
 
 int main(int argc, char const *argv[])
 {
+	Mix_Music *music = NULL;
 	short int graphics_version = 0;
 	short int change_graphics = 0;
 	struct field **board;
@@ -43,6 +43,8 @@ int main(int argc, char const *argv[])
 		printf("SDL_Init error: %s\n", SDL_GetError());
 		return 1;
 	}
+
+	Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 );
 
 	rc = SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window, &renderer);
 
@@ -142,7 +144,14 @@ int main(int argc, char const *argv[])
 					&scrtex,
 					&window,
 					&renderer);
+
 					flip = 0;
+
+					music = Mix_LoadMUS("./sound/soundtracks/hawaii.wav");
+					if (Mix_PlayingMusic() == 0)
+					{
+						Mix_PlayMusic(music, -1);
+					}
 				}
 			}
 
@@ -248,7 +257,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 	
-
+	Mix_FreeMusic(music);
 	SDL_FreeSurface(goal);
 	SDL_FreeSurface(barrel);
 	SDL_FreeSurface(wall);
